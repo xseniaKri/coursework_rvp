@@ -1,0 +1,32 @@
+\begin{thebibliography}{1}
+\def\selectlanguageifdefined#1{
+\expandafter\ifx\csname date#1\endcsname\relax
+\else\selectlanguage{#1}\fi}
+\providecommand*{\href}[2]{{\small #2}}
+\providecommand*{\url}[1]{{\small #1}}
+\providecommand*{\BibUrl}[1]{\url{#1}}
+\providecommand{\BibAnnote}[1]{}
+\providecommand*{\BibEmph}[1]{#1}
+
+\bibitem{mdn_web_docs}
+\selectlanguageifdefined{russian}
+MDN Web Docs [{Электронный ресурс}]. "---
+\newblock [{Б.\ м.}~: {б.\ и.}]. "---
+\newblock URL: \BibUrl{https://developer.mozilla.org/} ({дата
+  обращения}: 27.04.2026).
+
+\bibitem{fastapi_docs}
+\selectlanguageifdefined{russian}
+FastAPI Documentation [{Электронный ресурс}]. "---
+\newblock [{Б.\ м.}~: {б.\ и.}]. "---
+\newblock URL: \BibUrl{https://fastapi.tiangolo.com/} ({дата
+  обращения}: 27.04.2026).
+
+\bibitem{postgres_docs}
+\selectlanguageifdefined{russian}
+PostgreSQL Documentation [{Электронный ресурс}]. "---
+\newblock [{Б.\ м.}~: {б.\ и.}]. "---
+\newblock URL: \BibUrl{https://www.postgresql.org/docs/} ({дата
+  обращения}: 27.04.2026).
+
+\end{thebibliography}
