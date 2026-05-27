@@ -1,0 +1,18 @@
+from enum import StrEnum
+
+
+class Role(StrEnum):
+    ADMIN = "ADMIN"
+    DIRECTOR = "DIRECTOR"
+    DEPARTMENT_HEAD = "DEPARTMENT_HEAD"
+    ART_DIRECTOR = "ART_DIRECTOR"
+    EMPLOYEE = "EMPLOYEE"
+
+
+class EventStatus(StrEnum):
+    CREATED = "CREATED"
+    ON_APPROVAL = "ON_APPROVAL"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    PLANNED = "PLANNED"
+    COMPLETED = "COMPLETED"
