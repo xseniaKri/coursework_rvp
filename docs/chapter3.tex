@@ -3,55 +3,472 @@
 \addcontentsline{toc}{section}{Глава 3. Разработка веб-приложения}
 \stepcounter{section}
 
-\subsection{Разработка базовой структуры приложения и вёрстка}
+\subsection{Разработка пользовательского интерфейса и реализация базовой структуры страниц}
 
-В соответствии с задачей 3.1, была реализована компонентная структура фронтенд-части
-на базе библиотеки \textbf{React.js}. Использование хуков (\textit{Hooks}) позволило
-эффективно управлять состоянием формы заказа. Пример базового компонента представлен
-в листинге~\ref{lst:component}.
+В соответствии с задачей~3.1 была реализована серверная шаблонизация на основе
+движка Jinja2, встроенного в фреймворк FastAPI. Все страницы
+приложения строятся через наследование от единого базового шаблона
+\texttt{base.html}, что обеспечивает единообразие навигации и стилей.
 
-\begin{lstlisting}[caption={Пример структуры компонента карточки заказа}, label={lst:component}]
-// Комментарий 
-const OrderCard = ({ order }) => {
-  return (
-    <div className="order-card">
-      <h3>Заказ #{order.id}</h3>
-      <p>Адрес: {order.address}</p>
-      <button onClick={() => addToRoute(order.id)}>
-        Добавить в маршрут
-      </button>
-    </div>
-  );
-};
+Структура базового шаблона содержит:
+\begin{itemize}
+    \item общую шапку с логотипом системы и навигационным меню;
+    \item блоки \texttt{\{block content\}}, \texttt{\{block modals\}} и
+          \texttt{\{block scripts\}}, переопределяемые на дочерних страницах;
+    \item подключение глобальной таблицы стилей \texttt{style.css}.
+\end{itemize}
+
+Навигационное меню формируется динамически в зависимости от роли вошедшего
+пользователя: администратор видит ссылку на панель управления, художественный
+руководитель~--- дополнительный пункт «Отчеты», остальные роли получают только
+доступ к разделу мероприятий. Пример логики условного отображения меню
+приведён в листинге~\ref{lst:nav_template}.
+
+\begin{lstlisting}[caption={Фрагмент шаблона навигационного меню}, label={lst:nav_template}]
+<nav class="main-nav">
+  {% if current_user.role == 'ADMIN' %}
+    <a href="/admin">Панель администратора</a>
+  {% else %}
+    <a href="/events">Мероприятия</a>
+    {% if current_user.role == 'ART_DIRECTOR' %}
+      <a href="/reports">Отчеты</a>
+    {% endif %}
+  {% endif %}
+  <a href="/logout">Выйти</a>
+</nav>
 \end{lstlisting}
 
-\subsection{Реализация модуля авторизации}
+Корневой маршрут \texttt{/} перенаправляет пользователя на страницу
+мероприятий с помощью \texttt{RedirectResponse}, что позволяет избежать
+пустой стартовой страницы. Статические файлы (шрифты, CSS) обслуживаются
+через механизм \texttt{StaticFiles} фреймворка FastAPI по префиксу
+\texttt{/static}.
 
-Согласно задаче 3.2, в системе реализована ролевая модель доступа. Для обеспечения
-безопасности используется протокол \textbf{JWT} (JSON Web Token). При входе в
-систему сервер генерирует токен, содержащий поле \texttt{role}, которое может
-принимать значения \texttt{'dispatcher'} или \texttt{'courier'}.
+Для единообразия визуального оформления в приложении используется
+фирменный шрифт «George» в четырёх начертаниях (Regular, SemiBold, Bold,
+Italic). Цветовая палитра и шрифт соответствуют фирменному стилю ДК Подмосковья ~\cite{brandbook}.
+На страницах со списками мероприятий реализована постраничная навигация
+(пагинация): число записей на странице фиксировано, а ссылки на соседние
+страницы формируются шаблонным тегом с передачей текущих параметров
+фильтрации (см. листинг~\ref{lst:pagination}).
 
-\subsection{Интеграция картографических сервисов}
+\begin{lstlisting}[caption={Фрагмент шаблона пагинации}, label={lst:pagination}]
+{% if total_pages > 1 %}
+<nav class="pagination">
+  {% if page > 1 %}
+    <a href="?search={{ search }}&status={{ status_filter }}
+             &page={{ page - 1 }}" class="page-btn">&laquo;</a>
+  {% endif %}
+  {% for p in range(1, total_pages + 1) %}
+    <a href="?search={{ search }}&status={{ status_filter }}&page={{ p }}"
+       class="page-btn {% if p == page %}active{% endif %}">{{ p }}</a>
+  {% endfor %}
+  {% if page < total_pages %}
+    <a href="?search={{ search }}&status={{ status_filter }}
+             &page={{ page + 1 }}" class="page-btn">&raquo;</a>
+  {% endif %}
+</nav>
+{% endif %}
+\end{lstlisting}
+\newpage
+\subsection{Реализация модуля аутентификации пользователей и разграничения прав доступа}
 
-Ключевым этапом разработки (задача 3.4) стала интеграция API \linebreak \textbf{OpenStreetMap}
-через библиотеку \textit{Leaflet}. Для решения транспортной задачи был выбран
-жадный алгоритм с последующей оптимизацией методом локального поиска.
+Согласно задаче~3.2, в системе реализована многоуровневая модель доступа на
+основе ролей (RBAC). Предусмотрены четыре роли:
+\begin{itemize}
+    \item ADMIN --- системный администратор, управляет учётными
+          записями пользователей;
+    \item ART\_DIRECTOR --- художественный руководитель, имеет
+          полный доступ к мероприятиям и отчётам;
+    \item DEPARTMENT\_HEAD --- руководитель отдела, создаёт
+          мероприятия и назначает ответственных;
+    \item EMPLOYEE --- сотрудник, редактирует мероприятия,
+          за которые назначен ответственным.
+\end{itemize}
 
-Данные о маршруте передаются в формате JSON (см. листинг~\ref{lst:route_json}).
+Для обеспечения безопасности применяется протокол JWT (JSON Web Token) в связке с библиотекой python-jose. При успешной аутентификации сервер генерирует токен, содержащий идентификатор пользователя в поле sub и временну́ю метку истечения exp.
+Токен подписывается секретным ключом по алгоритму HS256.
+(см.\ листинг~\ref{lst:jwt_create}).
 
-\begin{lstlisting}[float, floatplacement=ht!, caption={Структура данных оптимизированного маршрута}, label={lst:route_json}]
-{
-  "route_id": "r-101",
-  "courier_id": "u-45",
-  "waypoints": [
-    {"lat": 55.75, "lng": 37.61, "sequence": 1},
-    {"lat": 55.80, "lng": 37.70, "sequence": 2}
-  ],
-  "total_distance_km": 12.4
+\begin{lstlisting}[caption={Функция генерации JWT-токена}, label={lst:jwt_create}]
+def create_access_token(
+    subject: str,
+    expires_delta: timedelta | None = None,
+) -> str:
+    expire = datetime.now(UTC) + (
+        expires_delta if expires_delta is not None
+        else timedelta(minutes=settings.jwt_access_token_expire_minutes)
+    )
+    payload: dict[str, Any] = {"sub": subject, "exp": expire}
+    return jwt.encode(
+        payload,
+        settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+    )
+\end{lstlisting}
+
+Пароли хранятся в базе данных в хешированном виде с использованием
+библиотеки bcrypt, которая автоматически добавляет «соль»
+при каждом вызове hashpw. Это исключает атаки по заранее
+вычисленным таблицам (rainbow tables).
+
+Для верификации входящих запросов зависимость
+get\_current\_user (модуль app/api/dependencies.py)
+извлекает токен из куки access\_token, декодирует его,
+получает из поля sub идентификатор пользователя и загружает
+соответствующую запись из базы данных. Если токен недействителен
+или пользователь не найден, возвращается HTTP-ответ
+401 Unauthorized.
+
+Разграничение прав доступа к операциям над мероприятиями реализовано в
+модуле app/core/permissions.py через набор чистых функций
+(листинг~\ref{lst:permissions}).
+
+\begin{lstlisting}[caption={Функции проверки прав доступа}, label={lst:permissions}]
+def can_create_event(user: User) -> bool:
+    return user.role in (Role.DEPARTMENT_HEAD, Role.ART_DIRECTOR)
+
+def can_edit_event(user: User, event: Event) -> bool:
+    if user.role == Role.ART_DIRECTOR:
+        return True
+    if user.role in (Role.EMPLOYEE, Role.DEPARTMENT_HEAD):
+        return event.responsible_id == user.id
+    return False
+
+def can_delete_event(user: User) -> bool:
+    return user.role == Role.ART_DIRECTOR
+
+def can_assign_responsible(user: User) -> bool:
+    return user.role in (Role.DEPARTMENT_HEAD, Role.ART_DIRECTOR)
+\end{lstlisting}
+
+Функции используются непосредственно в обработчиках API: при нарушении
+правил доступа возвращается ответ 403 Forbidden с текстом
+«Недостаточно прав».
+\newpage
+\subsection{Разработка CRUD-интерфейсов для управления мероприятиями и документами}
+
+В соответствии с задачей~3.3 разработаны полные CRUD-интерфейсы для
+двух ключевых сущностей: мероприятий и прикреплённых
+документов.
+
+\subsubsection*{Управление мероприятиями}
+
+Модель Event (таблица events) содержит следующие поля:
+\begin{itemize}
+    \item title~--- название мероприятия (VARCHAR(255));
+    \item description~--- текстовое описание (TEXT,
+          необязательное);
+    \item category\_id~--- внешний ключ на справочник категорий;
+    \item status~--- текущий статус из перечисления
+          EventStatus;
+    \item author\_id~--- создатель записи;
+    \item responsible\_id~--- назначенный ответственный
+          (может быть NULL);
+    \item planned\_date~--- планируемая дата проведения
+          (TIMESTAMP WITH TIME ZONE);
+    \item created\_at, updated\_at~--- временны́е метки
+          создания и последнего изменения.
+\end{itemize}
+
+REST API для работы с мероприятиями реализован в модуле
+app/api/events.py. Поддерживаются следующие операции:
+
+\begin{itemize}
+    \item GET /api/v1/events~--- получить список всех
+          мероприятий с возможностью фильтрации по статусу и поиску
+          по названию;
+    \item GET /api/v1/events/\{id\}~--- получить одно
+          мероприятие по идентификатору;
+    \item POST /api/v1/events~--- создать новое мероприятие
+          (только для ролей DEPARTMENT\_HEAD и
+          ART\_DIRECTOR);
+    \item PATCH /api/v1/events/\{id\}~--- частичное обновление
+          полей мероприятия;
+    \item DELETE /api/v1/events/\{id\}~--- удалить мероприятие
+          (только ART\_DIRECTOR).
+\end{itemize}
+
+Обработчик создания мероприятия приведён в листинге~\ref{lst:event_create}.
+
+\begin{lstlisting}[caption={Обработчик создания мероприятия}, label={lst:event_create}]
+@router.post("", response_model=EventResponse,
+             status_code=status.HTTP_201_CREATED)
+async def create_event(
+    data: EventCreate,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Event:
+    if not can_create_event(current_user):
+        _403()
+
+    responsible_id = data.responsible_id
+    if responsible_id is not None and not can_assign_responsible(current_user):
+        responsible_id = None
+
+    event = await EventRepository(session).create(
+        title=data.title,
+        description=data.description,
+        category_id=data.category_id,
+        author_id=current_user.id,
+        planned_date=data.planned_date,
+        responsible_id=responsible_id,
+    )
+    await session.commit()
+    return event
+\end{lstlisting}
+
+На стороне фронтенда список мероприятий отображается в виде таблицы
+с колонками «Название», «Дата», «Категория», «Ответственный» и
+«Статус». Кнопки «Изменить» и «Удалить» отображаются только у тех
+строк, к которым у текущего пользователя есть соответствующие права.
+
+\subsubsection*{Управление прикреплёнными документами}
+
+Для каждого мероприятия предусмотрена возможность прикрепления
+произвольных файлов (документов, изображений и т.д.). Модель
+File хранит путь до файла на диске, оригинальное имя,
+MIME-тип и временну́ю метку загрузки. Загруженные файлы сохраняются
+в директории uploads/\{event\_id\}/ с уникальным именем
+на основе UUID, что исключает конфликты имён.
+
+REST API работы с файлами (app/api/files.py) включает:
+\begin{itemize}
+    \item POST /api/v1/events/\{id\}/files~--- загрузка файла
+          (доступна ответственному сотруднику или арт-директору);
+    \item GET /api/v1/files/\{id\}/download~--- скачивание
+          файла по идентификатору;
+    \item DELETE /api/v1/files/\{id\}~--- удаление файла
+          (физическое удаление с диска и из базы данных).
+\end{itemize}
+
+На странице карточки мероприятия файлы отображаются в виде таблицы,
+где каждое имя является ссылкой для скачивания. Загрузка новых файлов
+выполняется асинхронно через Fetch API без перезагрузки
+страницы (листинг~\ref{lst:upload_js}).
+
+\begin{lstlisting}[caption={JavaScript-функция загрузки файлов}, label={lst:upload_js}]
+async function uploadFiles() {
+    const input = document.getElementById('file-upload');
+    if (!input || !input.files.length) {
+        alert('Выберите файлы'); return;
+    }
+    let hasError = false;
+    for (const file of input.files) {
+        const fd = new FormData();
+        fd.append('file', file);
+        const r = await fetch(
+            '/api/events/{{ event.id }}/files',
+            { method: 'POST', body: fd }
+        );
+        if (!r.ok) hasError = true;
+    }
+    if (hasError) alert('Не удалось загрузить файлы');
+    location.reload();
+}
+\end{lstlisting}
+\newpage
+\subsection{Реализация механизма формирования и выгрузки отчётов в формате Excel}
+
+В соответствии с задачей~3.4 реализован механизм генерации отчётов
+в формате Excel (.xlsx). Для работы с табличными
+данными используется библиотека pandas, а для записи
+файлов~--- openpyxl.
+
+Все конечные точки отчётности расположены в модуле
+app/api/reports.py. Ответ каждого эндпоинта является
+потоковым (StreamingResponse) с правильно установленными
+заголовками Content-Disposition и Content-Type,
+что обеспечивает автоматическое скачивание файла браузером
+(листинг~\ref{lst:xlsx_response}).
+
+\begin{lstlisting}[caption={Вспомогательная функция формирования Excel-ответа}, label={lst:xlsx_response}]
+def _xlsx_response(buf: io.BytesIO, filename: str) -> StreamingResponse:
+    buf.seek(0)
+    return StreamingResponse(
+        buf,
+        media_type=(
+            "application/vnd.openxmlformats-"
+            "officedocument.spreadsheetml.sheet"
+        ),
+        headers={
+            "Content-Disposition":
+                f'attachment; filename="{filename}"'
+        },
+    )
+\end{lstlisting}
+
+\subsubsection*{Месячный отчёт}
+
+Эндпоинт GET /api/v1/reports/monthly формирует сводку за
+предыдущий календарный месяц. С помощью функций extract
+SQLAlchemy выполняется выборка мероприятий, чья дата проведения
+попадает в нужный период. Результирующий файл содержит два листа:
+\begin{itemize}
+    \item «Итог (месяц год)»~--- сводная таблица: количество
+          проведённых и запланированных мероприятий, самая частая
+          категория;
+    \item «По категориям»~--- детализация проведённых мероприятий
+          в разрезе категорий.
+\end{itemize}
+
+\subsubsection*{Отчёт по сотрудникам}
+
+Эндпоинт GET /api/v1/reports/employees агрегирует данные
+по всем сотрудникам (роли, отличные от ADMIN). Для каждого
+сотрудника рассчитываются:
+\begin{itemize}
+    \item количество созданных мероприятий;
+    \item количество проведённых мероприятий (в роли ответственного);
+    \item доля отклонённых мероприятий от общего числа созданных, \%;
+    \item доля незавершённых мероприятий (статус PLANNED) от
+          суммы запланированных и проведённых, \%.
+\end{itemize}
+
+Пример вычисления процента отклонённых мероприятий приведён в
+листинге~\ref{lst:rejection_rate}.
+
+\begin{lstlisting}[caption={Вычисление доли отклонённых мероприятий}, label={lst:rejection_rate}]
+total_by_author = (
+    df_events.groupby("author_id").size()
+    .reset_index(name="total")
+    .rename(columns={"author_id": "id"})
+)
+rejected_by_author = (
+    df_events[df_events["status"] == rejected_str]
+    .groupby("author_id").size()
+    .reset_index(name="rejected")
+    .rename(columns={"author_id": "id"})
+)
+rej = total_by_author.merge(
+    rejected_by_author, on="id", how="left"
+).fillna(0)
+rej["% отклоненных"] = (
+    rej["rejected"] / rej["total"] * 100
+).round(1)
+\end{lstlisting}
+
+Файл также содержит второй лист «По категориям» с разбивкой
+проведённых мероприятий каждого сотрудника по категориям в виде
+сводной (pivot) таблицы.
+
+\subsubsection*{Отчёт по структурным подразделениям}
+
+Эндпоинт GET /api/v1/reports/structure-units формирует
+сводку в разрезе структурных подразделений (СП). Для каждого
+подразделения определяются:
+\begin{itemize}
+    \item количество сотрудников;
+    \item суммарное количество проведённых мероприятий, ответственный
+          за которые числится в данном СП;
+    \item разбивка проведённых мероприятий по категориям.
+\end{itemize}
+
+На клиентской стороне скачивание файла инициируется JavaScript:
+браузер получает Blob через Fetch API и создаёт
+временную ссылку с атрибутом download, после чего
+программно выполняет клик (листинг~\ref{lst:report_download}).
+
+\begin{lstlisting}[caption={Скачивание отчёта на стороне клиента}, label={lst:report_download}]
+async function downloadReport(type) {
+    const resp = await fetch(`/api/reports/${type}`);
+    const blob = await resp.blob();
+    const disposition =
+        resp.headers.get('Content-Disposition') || '';
+    const match = disposition.match(/filename="([^"]+)"/);
+    const filename = match
+        ? match[1]
+        : `report_${type}.xlsx`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+}
+\end{lstlisting}
+\newpage
+\subsection{Разработка системы мониторинга статусов мероприятий и формирования отчётности}
+
+Согласно задаче~3.5, в системе реализован жизненный цикл мероприятия
+на основе конечного автомата (State Machine). Допустимые переходы между
+статусами описаны в виде словаря \_TRANSITIONS в модуле
+app/core/permissions.py и представлены на
+схеме~\ref{lst:transitions}.
+
+\begin{lstlisting}[caption={Таблица допустимых переходов статусов}, label={lst:transitions}]
+_TRANSITIONS: dict[EventStatus, set[EventStatus]] = {
+    EventStatus.ON_APPROVAL: {
+        EventStatus.APPROVED, EventStatus.REJECTED
+    },
+    EventStatus.APPROVED:  {EventStatus.PLANNED},
+    EventStatus.PLANNED:   {EventStatus.COMPLETED},
+    EventStatus.COMPLETED: set(),
+    EventStatus.REJECTED:  set(),
 }
 \end{lstlisting}
 
-Как видно из листинга~\ref{lst:route_json}, каждая точка содержит порядковый
-номер (\texttt{sequence}), что позволяет курьеру следовать по оптимальному пути,
-рассчитанному на сервере.
+Перевод мероприятия в статусы APPROVED и REJECTED
+доступен исключительно художественному руководителю
+(ART\_DIRECTOR). Перевод из PLANNED в
+COMPLETED выполняет ответственный сотрудник или арт-директор.
+
+При каждой смене статуса в таблицу event\_history автоматически
+добавляется запись с указанием пользователя, совершившего изменение,
+предыдущего и нового статуса, а также необязательного комментария
+(листинг~\ref{lst:status_change}).
+\newpage
+\begin{lstlisting}[caption={Обработчик изменения статуса мероприятия}, label={lst:status_change}]
+@router.post("/{event_id}/status",
+             response_model=EventResponse)
+async def change_status(
+    event_id: int,
+    data: EventStatusUpdate,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Event:
+    event = await _get_event_or_404(event_id, session)
+
+    if not can_change_status(current_user, event, data.status):
+        _403()
+
+    old_status = event.status
+    event = await EventRepository(session).update(
+        event, status=data.status
+    )
+    await EventHistoryRepository(session).create(
+        event_id=event.id,
+        user_id=current_user.id,
+        old_status=old_status,
+        new_status=data.status,
+        comment=data.comment,
+    )
+    await session.commit()
+    return event
+\end{lstlisting}
+
+На странице карточки мероприятия отображается:
+\begin{itemize}
+    \item текущий статус в виде цветного значка-бейджа;
+    \item выпадающий список доступных переходов (формируется функцией
+          allowed\_statuses на основе роли пользователя и
+          текущего статуса);
+    \item поле для комментария при смене статуса;
+    \item таблица истории изменений со временем, автором и
+          комментарием каждого перехода.
+\end{itemize}
+
+Страница отчётности (/reports), доступная исключительно
+художественному руководителю, выводит счётчик проведённых мероприятий
+и три кнопки для загрузки отчётов: месячного, по сотрудникам и по
+структурным подразделениям. Запросы к API выполняются асинхронно,
+а пользователь информируется о процессе формирования файла через
+строку статуса под кнопками.
+
+Фильтрация списка мероприятий на главной странице позволяет
+осуществлять оперативный мониторинг: пользователь может отобрать
+записи по любому из пяти статусов (\textit{На согласовании},
+\textit{Согласовано}, \textit{Отклонено}, \textit{Запланировано},
+\textit{Проведено}) или выполнить текстовый поиск по названию
+мероприятия, что обеспечивает быстрый доступ к актуальным сведениям
+о ходе выполнения культурных мероприятий учреждения.
+
+\textbf{Репозиторий с кодом проекта:} https://github.com/xseniaKri/coursework\_rvp
