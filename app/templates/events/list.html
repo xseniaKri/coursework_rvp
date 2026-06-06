@@ -47,7 +47,7 @@
                 <td>{{ event.planned_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ event.category.name }}</td>
                 <td>{{ event.responsible.full_name if event.responsible else '—' }}</td>
-                <td>{{ STATUS_NAMES[event.status] }}</td>
+                <td><span class="badge badge--{{ event.status | lower }}">{{ STATUS_NAMES[event.status] }}</span></td>
                 {% if editable_ids or can_delete %}
                 <td class="actions">
                     {% if can_edit_this %}

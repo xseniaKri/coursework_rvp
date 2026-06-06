@@ -45,7 +45,9 @@
 
             <div class="info-item">
                 <div class="info-label">Статус</div>
-                <div class="info-value">{{ STATUS_NAMES[event.status] }}</div>
+                <div class="info-value">
+                    <span class="badge badge--{{ event.status | lower }}">{{ STATUS_NAMES[event.status] }}</span>
+                </div>
             </div>
 
             <div class="info-item">
@@ -97,7 +99,7 @@
             </tbody>
         </table>
         {% else %}
-        <p style="color:#888;">Файлы не прикреплены</p>
+        <p style="color:#999; font-size:14px;">Файлы не прикреплены</p>
         {% endif %}
 
         {% if can_edit %}

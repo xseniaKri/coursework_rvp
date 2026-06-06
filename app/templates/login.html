@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авторизация</title>
+    <title>Вход в систему</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="login-container">
         <form class="login-form" method="post" action="/login">
             <h1>Вход в систему</h1>
+            <p class="login-subtitle">Система управления мероприятиями</p>
 
             {% if error %}
-            <p style="color:#c00; text-align:center; margin-bottom:12px;">{{ error }}</p>
+            <div class="login-error">{{ error }}</div>
             {% endif %}
 
             <div class="login-fields">
