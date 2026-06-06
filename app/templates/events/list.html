@@ -5,7 +5,9 @@
 {% block content %}
 <header class="header">
     <h1>Мероприятия</h1>
+    {% if can_create %}
     <button onclick="location.href='/events/create'">Создать мероприятие</button>
+    {% endif %}
 </header>
 
 <main class="content">
@@ -28,11 +30,14 @@
                 <th>Категория</th>
                 <th>Ответственный</th>
                 <th>Статус</th>
+                {% if editable_ids or can_delete %}
                 <th></th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for event in events %}
+            {% set can_edit_this = event.id in editable_ids %}
             <tr>
                 <td>
                     <a href="/events/{{ event.id }}" style="text-decoration:none; color:inherit;">
@@ -43,13 +48,19 @@
                 <td>{{ event.category.name }}</td>
                 <td>{{ event.responsible.full_name if event.responsible else '—' }}</td>
                 <td>{{ event.status }}</td>
+                {% if editable_ids or can_delete %}
                 <td class="actions">
+                    {% if can_edit_this %}
                     <button class="edit-btn" onclick="location.href='/events/{{ event.id }}/edit'">Изменить</button>
+                    {% endif %}
+                    {% if can_delete %}
                     <button class="delete-btn"
                             onclick="openDeleteModal({{ event.id }}, '{{ event.title | e }}')">
                         Удалить
                     </button>
+                    {% endif %}
                 </td>
+                {% endif %}
             </tr>
             {% else %}
             <tr>
@@ -62,6 +73,7 @@
 {% endblock %}
 
 {% block modals %}
+{% if can_delete %}
 <div class="modal" id="delete-modal" style="display:none;">
     <div class="modal-content small-modal">
         <h2>Удаление мероприятия</h2>
@@ -72,9 +84,11 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
+{% if can_delete %}
 <script>
 let deleteEventId = null;
 
@@ -99,4 +113,5 @@ document.getElementById('confirm-delete-btn').addEventListener('click', async ()
     }
 });
 </script>
+{% endif %}
 {% endblock %}

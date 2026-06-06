@@ -3,7 +3,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import get_current_user
 from app.core.database import get_db
-from app.models.enums import EventStatus, Role
+from app.core.permissions import (
+    can_change_status,
+    can_create_event,
+    can_delete_event,
+    can_edit_event,
+    can_assign_responsible,
+)
 from app.models.event import Event
 from app.models.user import User
 from app.repositories.event import EventRepository
@@ -11,6 +17,10 @@ from app.repositories.event_history import EventHistoryRepository
 from app.schemas.event import EventCreate, EventResponse, EventStatusUpdate, EventUpdate
 
 router = APIRouter()
+
+
+def _403(detail: str = "Недостаточно прав"):
+    raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=detail)
 
 
 async def _get_event_or_404(event_id: int, session: AsyncSession) -> Event:
@@ -22,12 +32,14 @@ async def _get_event_or_404(event_id: int, session: AsyncSession) -> Event:
 
 @router.get("", response_model=list[EventResponse])
 async def list_events(
-    status: EventStatus | None = None,
+    status: str | None = None,
     search: str | None = None,
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> list[Event]:
-    return await EventRepository(session).get_all(status=status, search=search)
+    from app.models.enums import EventStatus
+    status_filter = EventStatus(status) if status else None
+    return await EventRepository(session).get_all(status=status_filter, search=search)
 
 
 @router.get("/{event_id}", response_model=EventResponse)
@@ -45,13 +57,21 @@ async def create_event(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> Event:
+    if not can_create_event(current_user):
+        _403()
+
+    # Только DEPARTMENT_HEAD и ART_DIRECTOR могут назначать ответственного
+    responsible_id = data.responsible_id
+    if responsible_id is not None and not can_assign_responsible(current_user):
+        responsible_id = None
+
     event = await EventRepository(session).create(
         title=data.title,
         description=data.description,
         category_id=data.category_id,
         author_id=current_user.id,
         planned_date=data.planned_date,
-        responsible_id=data.responsible_id,
+        responsible_id=responsible_id,
     )
     await session.commit()
     return event
@@ -65,7 +85,16 @@ async def update_event(
     current_user: User = Depends(get_current_user),
 ) -> Event:
     event = await _get_event_or_404(event_id, session)
+
+    if not can_edit_event(current_user, event):
+        _403()
+
     updates = data.model_dump(exclude_none=True)
+
+    # EMPLOYEE не может менять ответственного
+    if not can_assign_responsible(current_user):
+        updates.pop("responsible_id", None)
+
     event = await EventRepository(session).update(event, **updates)
     await session.commit()
     return event
@@ -79,9 +108,12 @@ async def change_status(
     current_user: User = Depends(get_current_user),
 ) -> Event:
     event = await _get_event_or_404(event_id, session)
+
+    if not can_change_status(current_user, event, data.status):
+        _403()
+
     old_status = event.status
-    repo = EventRepository(session)
-    event = await repo.update(event, status=data.status)
+    event = await EventRepository(session).update(event, status=data.status)
     await EventHistoryRepository(session).create(
         event_id=event.id,
         user_id=current_user.id,
@@ -99,8 +131,8 @@ async def delete_event(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> None:
+    if not can_delete_event(current_user):
+        _403()
     event = await _get_event_or_404(event_id, session)
-    if current_user.role not in (Role.ADMIN, Role.DEPARTMENT_HEAD) and event.author_id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not allowed")
     await EventRepository(session).delete(event)
     await session.commit()

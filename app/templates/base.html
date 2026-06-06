@@ -12,10 +12,11 @@
 <header class="main-header">
     <div class="logo">Система мероприятий</div>
     <nav class="main-nav">
-        <a href="/events">Мероприятия</a>
-        <a href="/reports">Отчеты</a>
         {% if current_user.role == 'ADMIN' %}
         <a href="/admin">Панель администратора</a>
+        {% else %}
+        <a href="/events">Мероприятия</a>
+        <a href="/reports">Отчеты</a>
         {% endif %}
         <a href="/logout" style="color:#c00">Выйти</a>
     </nav>

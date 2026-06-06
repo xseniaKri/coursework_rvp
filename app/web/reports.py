@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.models.enums import Role
 from app.models.user import User
 from app.repositories.event import EventRepository
 from app.web.dependencies import get_current_user_from_cookie
@@ -18,6 +19,8 @@ async def reports_page(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user_from_cookie),
 ):
+    if current_user.role == Role.ADMIN:
+        return RedirectResponse(url="/admin", status_code=302)
     events_this_month = await EventRepository(session).count_this_month()
     return templates.TemplateResponse("reports.html", {
         "request": request,

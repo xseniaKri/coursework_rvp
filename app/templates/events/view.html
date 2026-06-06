@@ -6,7 +6,9 @@
 <header class="header">
     <h1>Карточка мероприятия</h1>
     <div class="header-actions">
+        {% if can_edit %}
         <button class="edit-btn" onclick="location.href='/events/{{ event.id }}/edit'">Редактировать</button>
+        {% endif %}
         <button class="secondary-btn" onclick="location.href='/events'">Назад</button>
     </div>
 </header>
@@ -54,11 +56,12 @@
         </div>
     </section>
 
+    {% if allowed_statuses %}
     <section class="form-section">
         <h2>Изменить статус</h2>
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
             <select id="new-status">
-                {% for s in statuses %}
+                {% for s in allowed_statuses %}
                 <option value="{{ s }}" {% if event.status == s %}selected{% endif %}>{{ s }}</option>
                 {% endfor %}
             </select>
@@ -66,6 +69,7 @@
             <button class="edit-btn" onclick="changeStatus()">Применить</button>
         </div>
     </section>
+    {% endif %}
 
     {% if event.history %}
     <section class="form-section">
@@ -99,6 +103,7 @@
 {% endblock %}
 
 {% block scripts %}
+{% if allowed_statuses %}
 <script>
 async function changeStatus() {
     const newStatus = document.getElementById('new-status').value;
@@ -116,4 +121,5 @@ async function changeStatus() {
     }
 }
 </script>
+{% endif %}
 {% endblock %}

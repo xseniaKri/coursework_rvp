@@ -31,7 +31,9 @@ async def login_submit(
             status_code=401,
         )
     token = create_access_token(subject=str(user.id))
-    response = RedirectResponse(url="/events", status_code=302)
+    from app.models.enums import Role
+    redirect_url = "/admin" if user.role == Role.ADMIN else "/events"
+    response = RedirectResponse(url=redirect_url, status_code=302)
     response.set_cookie("access_token", token, httponly=True, samesite="lax")
     return response
 

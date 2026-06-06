@@ -41,9 +41,11 @@
                             {{ cat.name }}
                         </option>
                         {% endfor %}
+                        <option value="__new__">＋ Создать категорию</option>
                     </select>
                 </div>
 
+                {% if can_assign_responsible %}
                 <div class="field">
                     <label>Ответственный</label>
                     <select id="responsible_id" name="responsible_id">
@@ -56,6 +58,7 @@
                         {% endfor %}
                     </select>
                 </div>
+                {% endif %}
             </div>
         </section>
 
@@ -67,22 +70,91 @@
 </main>
 {% endblock %}
 
+{% block modals %}
+<div class="modal" id="new-category-modal" style="display:none;">
+    <div class="modal-content small-modal">
+        <h2>Новая категория</h2>
+        <form class="modal-form" id="new-category-form">
+            <div class="field">
+                <label>Название</label>
+                <input type="text" id="new-category-name" placeholder="Введите название" required autofocus>
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="edit-btn">Создать</button>
+                <button type="button" class="secondary-btn" onclick="cancelNewCategory()">Отмена</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
 {% block scripts %}
 <script>
 const isEdit = {{ 'true' if event else 'false' }};
 const eventId = {{ event.id if event else 'null' }};
+const canAssignResponsible = {{ 'true' if can_assign_responsible else 'false' }};
+
+const categorySelect = document.getElementById('category_id');
+
+categorySelect.addEventListener('change', () => {
+    if (categorySelect.value === '__new__') {
+        document.getElementById('new-category-modal').style.display = 'flex';
+        document.getElementById('new-category-name').focus();
+    }
+});
+
+function cancelNewCategory() {
+    document.getElementById('new-category-modal').style.display = 'none';
+    categorySelect.value = '';
+}
+
+document.getElementById('new-category-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('new-category-name').value.trim();
+    if (!name) return;
+
+    const resp = await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+    });
+
+    if (resp.ok) {
+        const cat = await resp.json();
+        const newOpt = document.createElement('option');
+        newOpt.value = cat.id;
+        newOpt.textContent = cat.name;
+        const createOpt = categorySelect.querySelector('option[value="__new__"]');
+        categorySelect.insertBefore(newOpt, createOpt);
+        categorySelect.value = cat.id;
+        document.getElementById('new-category-modal').style.display = 'none';
+        document.getElementById('new-category-name').value = '';
+    } else {
+        const err = await resp.json().catch(() => ({}));
+        alert('Ошибка: ' + (err.detail || resp.status));
+    }
+});
 
 document.getElementById('event-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = e.target;
-    const responsibleVal = form.responsible_id.value;
+
+    if (!form.category_id.value || form.category_id.value === '__new__') {
+        alert('Выберите категорию');
+        return;
+    }
+
     const body = {
         title: form.title.value,
         description: form.description.value || null,
         category_id: parseInt(form.category_id.value),
         planned_date: new Date(form.planned_date.value).toISOString(),
-        responsible_id: responsibleVal ? parseInt(responsibleVal) : null,
     };
+
+    if (canAssignResponsible) {
+        const rv = form.responsible_id.value;
+        body.responsible_id = rv ? parseInt(rv) : null;
+    }
 
     const url = isEdit ? `/api/events/${eventId}` : '/api/events';
     const method = isEdit ? 'PATCH' : 'POST';
