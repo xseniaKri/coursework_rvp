@@ -9,7 +9,6 @@ class Role(StrEnum):
 
 
 class EventStatus(StrEnum):
-    CREATED = "CREATED"
     ON_APPROVAL = "ON_APPROVAL"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"

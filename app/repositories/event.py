@@ -55,7 +55,7 @@ class EventRepository(BaseRepository[Event]):
             author_id=author_id,
             planned_date=planned_date,
             responsible_id=responsible_id,
-            status=EventStatus.CREATED,
+            status=EventStatus.ON_APPROVAL,
         )
         self.session.add(event)
         await self.session.flush()
@@ -80,5 +80,12 @@ class EventRepository(BaseRepository[Event]):
                 extract("year", Event.planned_date) == today.year,
                 extract("month", Event.planned_date) == today.month,
             )
+        )
+        return result.scalar_one()
+
+    async def count_completed(self) -> int:
+        from sqlalchemy import func
+        result = await self.session.execute(
+            select(func.count(Event.id)).where(Event.status == EventStatus.COMPLETED)
         )
         return result.scalar_one()

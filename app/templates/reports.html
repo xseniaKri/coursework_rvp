@@ -10,18 +10,50 @@
 <main class="dashboard">
     <div class="stats-grid">
         <div class="card">
-            <h2>Мероприятий за месяц</h2>
-            <p style="font-size: 2.5rem; font-weight: bold; margin: 0;">{{ events_this_month }}</p>
+            <h2>Мероприятий проведено</h2>
+            <p style="font-size: 2.5rem; font-weight: bold; margin: 0;">{{ completed_count }}</p>
+            <p style="color:#888; margin:4px 0 0;">всего в статусе «Проведено»</p>
         </div>
     </div>
 
     <section class="reports" style="margin-top: 24px;">
         <h2>Формирование отчетов</h2>
         <div style="display:flex; flex-direction:column; gap:12px; max-width:320px; margin-top:16px;">
-            <button onclick="alert('Функция в разработке')">Сформировать месячный отчет</button>
-            <button onclick="alert('Функция в разработке')">Сформировать отчет по сотрудникам</button>
-            <button onclick="alert('Функция в разработке')">Сформировать отчет по СП</button>
+            <button onclick="downloadReport('monthly')">Сформировать месячный отчет</button>
+            <button onclick="downloadReport('employees')">Сформировать отчет по сотрудникам</button>
+            <button onclick="downloadReport('structure-units')">Сформировать отчет по СП</button>
         </div>
+        <p id="report-status" style="margin-top:12px; color:#888;"></p>
     </section>
 </main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function downloadReport(type) {
+    const statusEl = document.getElementById('report-status');
+    statusEl.textContent = 'Формирование отчета...';
+    try {
+        const resp = await fetch(`/api/reports/${type}`);
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            statusEl.textContent = 'Ошибка: ' + (err.detail || resp.status);
+            return;
+        }
+        const blob = await resp.blob();
+        const disposition = resp.headers.get('Content-Disposition') || '';
+        const match = disposition.match(/filename="([^"]+)"/);
+        const filename = match ? match[1] : `report_${type}.xlsx`;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+        statusEl.textContent = '';
+    } catch (e) {
+        statusEl.textContent = 'Ошибка при загрузке отчета';
+    }
+}
+</script>
 {% endblock %}

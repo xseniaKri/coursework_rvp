@@ -24,7 +24,7 @@ class Event(Base):
     status: Mapped[EventStatus] = mapped_column(
         Enum(EventStatus, name="event_status"),
         nullable=False,
-        default=EventStatus.CREATED,
+        default=EventStatus.ON_APPROVAL,
     )
     author_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     responsible_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)

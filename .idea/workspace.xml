@@ -5,8 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="00cb1b44-e1d1-4577-8d23-7582cfc8d878" name="Changes" comment="feat: добавила шаблоны страниц + создание админа в миграции">
-      <change afterPath="$PROJECT_DIR$/app/models/file.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/core/permissions.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/permissions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/enums.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/enums.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/event.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repositories/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repositories/event.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/reports.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/web/reports.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/web/reports.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/web/templates.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/web/templates.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

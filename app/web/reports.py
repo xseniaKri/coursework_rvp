@@ -20,9 +20,9 @@ async def reports_page(
 ):
     if current_user.role == Role.ADMIN:
         return RedirectResponse(url="/admin", status_code=302)
-    events_this_month = await EventRepository(session).count_this_month()
+    completed_count = await EventRepository(session).count_completed()
     return templates.TemplateResponse("reports.html", {
         "request": request,
         "current_user": current_user,
-        "events_this_month": events_this_month,
+        "completed_count": completed_count,
     })

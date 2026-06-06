@@ -10,7 +10,6 @@ templates.env.globals["ROLE_NAMES"] = {
 }
 
 templates.env.globals["STATUS_NAMES"] = {
-    "CREATED": "Создано",
     "ON_APPROVAL": "На согласовании",
     "APPROVED": "Согласовано",
     "REJECTED": "Отклонено",

@@ -4,7 +4,6 @@ from app.models.user import User
 
 # Разрешённые переходы между статусами
 _TRANSITIONS: dict[EventStatus, set[EventStatus]] = {
-    EventStatus.CREATED:     {EventStatus.ON_APPROVAL},
     EventStatus.ON_APPROVAL: {EventStatus.APPROVED, EventStatus.REJECTED},
     EventStatus.APPROVED:    {EventStatus.PLANNED},
     EventStatus.PLANNED:     {EventStatus.COMPLETED},
