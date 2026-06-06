@@ -31,7 +31,7 @@ async def get_current_user(
         raise credentials_exception from None
 
     user = await UserRepository(session).get_by_id(user_id)
-    if user is None or not user.is_active:
+    if user is None:
         raise credentials_exception
     return user
 

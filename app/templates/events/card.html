@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Редактировать' if event else 'Создать' }} мероприятие{% endblock %}
+
+{% block content %}
+<header class="header">
+    <h1>{{ 'Редактировать мероприятие' if event else 'Создать мероприятие' }}</h1>
+    <div class="header-actions">
+        <button class="secondary-btn" onclick="history.back()">Назад</button>
+    </div>
+</header>
+
+<main class="event-card">
+    <form id="event-form">
+        <section class="form-section">
+            <div class="grid">
+                <div class="field">
+                    <label>Название</label>
+                    <input type="text" id="title" name="title" required
+                           value="{{ event.title if event else '' }}">
+                </div>
+
+                <div class="field">
+                    <label>Описание</label>
+                    <textarea id="description" name="description">{{ event.description if event else '' }}</textarea>
+                </div>
+
+                <div class="field">
+                    <label>Дата</label>
+                    <input type="date" id="planned_date" name="planned_date" required
+                           value="{{ event.planned_date.strftime('%Y-%m-%d') if event else '' }}">
+                </div>
+
+                <div class="field">
+                    <label>Категория</label>
+                    <select id="category_id" name="category_id" required>
+                        <option value="">— выберите —</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}"
+                            {% if event and event.category_id == cat.id %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Ответственный</label>
+                    <select id="responsible_id" name="responsible_id">
+                        <option value="">— не назначен —</option>
+                        {% for u in users %}
+                        <option value="{{ u.id }}"
+                            {% if event and event.responsible_id == u.id %}selected{% endif %}>
+                            {{ u.full_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <div style="padding: 0 0 20px 0; display:flex; gap:10px;">
+            <button type="submit">{{ 'Сохранить' if event else 'Создать' }}</button>
+            <button type="button" class="secondary-btn" onclick="history.back()">Отмена</button>
+        </div>
+    </form>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const isEdit = {{ 'true' if event else 'false' }};
+const eventId = {{ event.id if event else 'null' }};
+
+document.getElementById('event-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const responsibleVal = form.responsible_id.value;
+    const body = {
+        title: form.title.value,
+        description: form.description.value || null,
+        category_id: parseInt(form.category_id.value),
+        planned_date: new Date(form.planned_date.value).toISOString(),
+        responsible_id: responsibleVal ? parseInt(responsibleVal) : null,
+    };
+
+    const url = isEdit ? `/api/events/${eventId}` : '/api/events';
+    const method = isEdit ? 'PATCH' : 'POST';
+
+    const resp = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+
+    if (resp.ok) {
+        const data = await resp.json();
+        location.href = `/events/${data.id}`;
+    } else {
+        const err = await resp.json().catch(() => ({}));
+        alert('Ошибка: ' + (err.detail || resp.status));
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<header class="header">
+    <h1>Карточка мероприятия</h1>
+    <div class="header-actions">
+        <button class="edit-btn" onclick="location.href='/events/{{ event.id }}/edit'">Редактировать</button>
+        <button class="secondary-btn" onclick="location.href='/events'">Назад</button>
+    </div>
+</header>
+
+<main class="content event-view">
+
+    <section class="form-section">
+        <div class="info-grid">
+
+            <div class="info-item">
+                <div class="info-label">Название</div>
+                <div class="info-value">{{ event.title }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Дата проведения</div>
+                <div class="info-value">{{ event.planned_date.strftime('%d.%m.%Y') }}</div>
+            </div>
+
+            <div class="info-item full-width">
+                <div class="info-label">Описание</div>
+                <div class="info-value">{{ event.description or '—' }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Категория</div>
+                <div class="info-value">{{ event.category.name }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Ответственный сотрудник</div>
+                <div class="info-value">{{ event.responsible.full_name if event.responsible else '—' }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Статус</div>
+                <div class="info-value">{{ event.status }}</div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Автор</div>
+                <div class="info-value">{{ event.author.full_name }}</div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="form-section">
+        <h2>Изменить статус</h2>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <select id="new-status">
+                {% for s in statuses %}
+                <option value="{{ s }}" {% if event.status == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" id="status-comment" placeholder="Комментарий (необязательно)" style="width:250px;">
+            <button class="edit-btn" onclick="changeStatus()">Применить</button>
+        </div>
+    </section>
+
+    {% if event.history %}
+    <section class="form-section">
+        <h2>История изменений</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Пользователь</th>
+                    <th>Было</th>
+                    <th>Стало</th>
+                    <th>Комментарий</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in event.history %}
+                <tr>
+                    <td>{{ h.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                    <td>{{ h.user.full_name }}</td>
+                    <td>{{ h.old_status or '—' }}</td>
+                    <td>{{ h.new_status }}</td>
+                    <td>{{ h.comment or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    {% endif %}
+
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function changeStatus() {
+    const newStatus = document.getElementById('new-status').value;
+    const comment = document.getElementById('status-comment').value;
+    const resp = await fetch('/api/events/{{ event.id }}/status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus, comment: comment || null }),
+    });
+    if (resp.ok) {
+        location.reload();
+    } else {
+        const err = await resp.json().catch(() => ({}));
+        alert('Ошибка: ' + (err.detail || resp.status));
+    }
+}
+</script>
+{% endblock %}

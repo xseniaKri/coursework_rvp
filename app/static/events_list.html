@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список мероприятий</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+        <header class="main-header">
+
+    <div class="logo">
+        Система мероприятий
+    </div>
+
+    <nav class="main-nav">
+        <a href="#">Мероприятия</a>
+        <a href="#">Отчеты</a>
+        <a href="#">Панель администратора</a>
+    </nav>
+
+</header>
+    <header class="header">
+        <h1>Мероприятия</h1>
+        <button>Создать мероприятие</button>
+    </header>
+
+    <main class="content">
+        <div class="filters">
+            <input type="text" placeholder="Поиск мероприятия">
+
+            <select>
+                <option>Все статусы</option>
+                <option>Запланировано</option>
+                <option>На согласовании</option>
+                <option>Проведено</option>
+            </select>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Дата</th>
+                    <th>Категория</th>
+                    <th>Ответственный</th>
+                    <th>Статус</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Концерт ко Дню города</td>
+                    <td>15.05.2026</td>
+                    <td>Городское</td>
+                    <td>Иванов И.И.</td>
+                    <td>Проведено</td>
+                    <td class="actions">
+                        <button class="delete-btn">Удалить</button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Детский фестиваль</td>
+                    <td>21.05.2026</td>
+                    <td>Для школьников</td>
+                    <td>Петрова А.А.</td>
+                    <td>На согласовании</td>
+                    <td class="actions">
+                        <button class="delete-btn">Удалить</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+    <div class="modal" id="sp-delete-modal">
+    <div class="modal-content small-modal">
+
+        <h2>Удаление мероприятия</h2>
+
+        <p>
+            Вы действительно хотите удалить мероприятие
+            <b>Детский фестиваль</b>?
+        </p>
+
+        <div class="modal-actions">
+            <button class="delete-btn">Удалить</button>
+            <button class="secondary-btn">Отмена</button>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Система мероприятий{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<header class="main-header">
+    <div class="logo">Система мероприятий</div>
+    <nav class="main-nav">
+        <a href="/events">Мероприятия</a>
+        <a href="/reports">Отчеты</a>
+        {% if current_user.role == 'ADMIN' %}
+        <a href="/admin">Панель администратора</a>
+        {% endif %}
+        <a href="/logout" style="color:#c00">Выйти</a>
+    </nav>
+</header>
+
+{% block content %}{% endblock %}
+
+{% block modals %}{% endblock %}
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

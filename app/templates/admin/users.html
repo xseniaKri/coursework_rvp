@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Управление пользователями{% endblock %}
+
+{% block content %}
+<header class="header">
+    <h1>Управление пользователями и СП</h1>
+    <div class="header-actions">
+        <button onclick="openModal('user-create-modal')">Добавить пользователя</button>
+        <button onclick="openModal('su-create-modal')">Добавить СП</button>
+    </div>
+</header>
+
+<main class="content">
+
+    <section class="block">
+        <h2>Пользователи</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Email</th>
+                    <th>Роль</th>
+                    <th>СП</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.full_name }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.role }}</td>
+                    <td>{{ u.su_id }}</td>
+                    <td class="actions">
+                        <button class="delete-btn"
+                                onclick="deleteUser({{ u.id }}, '{{ u.full_name | e }}')">
+                            Удалить
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" style="text-align:center; color:#888;">Нет пользователей</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section class="block">
+        <h2>Структурные подразделения</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Адрес</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for su in structure_units %}
+                <tr>
+                    <td>{{ su.name }}</td>
+                    <td>{{ su.address }}</td>
+                    <td class="actions">
+                        <button class="delete-btn"
+                                onclick="deleteSU({{ su.id }}, '{{ su.name | e }}')">
+                            Удалить
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3" style="text-align:center; color:#888;">Нет подразделений</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+</main>
+{% endblock %}
+
+{% block modals %}
+
+<div class="modal" id="user-create-modal" style="display:none;">
+    <div class="modal-content">
+        <h2>Добавление пользователя</h2>
+        <form class="modal-form" id="user-create-form">
+            <div class="field">
+                <label>ФИО</label>
+                <input type="text" name="full_name" placeholder="Иванов Иван Иванович" required>
+            </div>
+            <div class="field">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="user@mail.ru" required>
+            </div>
+            <div class="field">
+                <label>Пароль</label>
+                <input type="password" name="password" placeholder="Минимум 8 символов" required>
+            </div>
+            <div class="field">
+                <label>Роль</label>
+                <select name="role" required>
+                    {% for r in roles %}
+                    <option value="{{ r }}">{{ r }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="field">
+                <label>Структурное подразделение</label>
+                <select name="su_id" required>
+                    <option value="">— выберите —</option>
+                    {% for su in structure_units %}
+                    <option value="{{ su.id }}">{{ su.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="edit-btn">Создать</button>
+                <button type="button" class="secondary-btn" onclick="closeModal('user-create-modal')">Отмена</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="su-create-modal" style="display:none;">
+    <div class="modal-content">
+        <h2>Добавление структурного подразделения</h2>
+        <form class="modal-form" id="su-create-form">
+            <div class="field">
+                <label>Название</label>
+                <input type="text" name="name" placeholder="Отдел краеведения" required>
+            </div>
+            <div class="field">
+                <label>Адрес</label>
+                <input type="text" name="address" placeholder="г. Фрязино, ул. Комсомольская, д. 28" required>
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="edit-btn">Создать</button>
+                <button type="button" class="secondary-btn" onclick="closeModal('su-create-modal')">Отмена</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="delete-modal" style="display:none;">
+    <div class="modal-content small-modal">
+        <h2 id="delete-modal-title">Удаление</h2>
+        <p id="delete-modal-text"></p>
+        <div class="modal-actions">
+            <button class="delete-btn" id="delete-confirm-btn">Удалить</button>
+            <button class="secondary-btn" onclick="closeModal('delete-modal')">Отмена</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openModal(id) {
+    document.getElementById(id).style.display = 'flex';
+}
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
+
+document.getElementById('user-create-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = {
+        full_name: fd.get('full_name'),
+        email: fd.get('email'),
+        password: fd.get('password'),
+        role: fd.get('role'),
+        su_id: parseInt(fd.get('su_id')),
+    };
+    const resp = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    if (resp.ok) {
+        location.reload();
+    } else {
+        const err = await resp.json().catch(() => ({}));
+        alert('Ошибка: ' + (err.detail || resp.status));
+    }
+});
+
+document.getElementById('su-create-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const body = { name: fd.get('name'), address: fd.get('address') };
+    const resp = await fetch('/api/structure-units', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    });
+    if (resp.ok) {
+        location.reload();
+    } else {
+        const err = await resp.json().catch(() => ({}));
+        alert('Ошибка: ' + (err.detail || resp.status));
+    }
+});
+
+let deleteAction = null;
+
+function deleteUser(id, name) {
+    document.getElementById('delete-modal-title').textContent = 'Удаление пользователя';
+    document.getElementById('delete-modal-text').innerHTML = `Вы действительно хотите удалить пользователя <b>${name}</b>?`;
+    deleteAction = () => fetch(`/api/users/${id}`, { method: 'DELETE' });
+    openModal('delete-modal');
+}
+
+function deleteSU(id, name) {
+    document.getElementById('delete-modal-title').textContent = 'Удаление подразделения';
+    document.getElementById('delete-modal-text').innerHTML = `Вы действительно хотите удалить СП <b>${name}</b>?`;
+    deleteAction = () => fetch(`/api/structure-units/${id}`, { method: 'DELETE' });
+    openModal('delete-modal');
+}
+
+document.getElementById('delete-confirm-btn').addEventListener('click', async () => {
+    if (!deleteAction) return;
+    const resp = await deleteAction();
+    if (resp.ok || resp.status === 204) {
+        location.reload();
+    } else {
+        alert('Ошибка при удалении');
+    }
+});
+</script>
+{% endblock %}

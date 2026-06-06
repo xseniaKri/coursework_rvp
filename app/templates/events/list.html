@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Мероприятия{% endblock %}
+
+{% block content %}
+<header class="header">
+    <h1>Мероприятия</h1>
+    <button onclick="location.href='/events/create'">Создать мероприятие</button>
+</header>
+
+<main class="content">
+    <form class="filters" method="get" action="/events">
+        <input type="text" name="search" placeholder="Поиск мероприятия" value="{{ search }}">
+        <select name="status" onchange="this.form.submit()">
+            <option value="">Все статусы</option>
+            {% for s in statuses %}
+            <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Найти</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Дата</th>
+                <th>Категория</th>
+                <th>Ответственный</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>
+                    <a href="/events/{{ event.id }}" style="text-decoration:none; color:inherit;">
+                        {{ event.title }}
+                    </a>
+                </td>
+                <td>{{ event.planned_date.strftime('%d.%m.%Y') }}</td>
+                <td>{{ event.category.name }}</td>
+                <td>{{ event.responsible.full_name if event.responsible else '—' }}</td>
+                <td>{{ event.status }}</td>
+                <td class="actions">
+                    <button class="edit-btn" onclick="location.href='/events/{{ event.id }}/edit'">Изменить</button>
+                    <button class="delete-btn"
+                            onclick="openDeleteModal({{ event.id }}, '{{ event.title | e }}')">
+                        Удалить
+                    </button>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align:center; color:#888;">Мероприятия не найдены</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+{% endblock %}
+
+{% block modals %}
+<div class="modal" id="delete-modal" style="display:none;">
+    <div class="modal-content small-modal">
+        <h2>Удаление мероприятия</h2>
+        <p>Вы действительно хотите удалить мероприятие <b id="delete-event-title"></b>?</p>
+        <div class="modal-actions">
+            <button class="delete-btn" id="confirm-delete-btn">Удалить</button>
+            <button class="secondary-btn" onclick="closeDeleteModal()">Отмена</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let deleteEventId = null;
+
+function openDeleteModal(id, title) {
+    deleteEventId = id;
+    document.getElementById('delete-event-title').textContent = title;
+    document.getElementById('delete-modal').style.display = 'flex';
+}
+
+function closeDeleteModal() {
+    document.getElementById('delete-modal').style.display = 'none';
+    deleteEventId = null;
+}
+
+document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
+    if (!deleteEventId) return;
+    const resp = await fetch(`/api/events/${deleteEventId}`, { method: 'DELETE' });
+    if (resp.ok || resp.status === 204) {
+        location.reload();
+    } else {
+        alert('Ошибка при удалении');
+    }
+});
+</script>
+{% endblock %}

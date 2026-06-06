@@ -5,18 +5,46 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="00cb1b44-e1d1-4577-8d23-7582cfc8d878" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/models/category.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/structure_unit.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/categories.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/events.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/structure_units.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/users_admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/category.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/event.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/event_history.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/repositories/structure_unit.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/schemas/event.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/schemas/structure_unit.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/event-view.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/event_card.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/events_list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/reports.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/static/users.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/admin/users.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/events/card.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/events/list.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/events/view.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/templates/reports.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/web/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/web/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/web/auth.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/web/dependencies.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/web/events.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/web/reports.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/web/router.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/alembic.ini" beforeDir="false" afterPath="$PROJECT_DIR$/alembic.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/event.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/README" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/env.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/script.py.mako" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/versions/20260528_0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/versions/20260528_0002_create_user_event_models.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic/versions/7e937aa93846_create_all_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/alembic/versions/7e937aa93846_create_all_models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/dependencies.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/dependencies.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/router.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/repositories/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repositories/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Просмотр/редактирование мероприятия</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <header class="main-header">
+
+    <div class="logo">
+        Система мероприятий
+    </div>
+
+    <nav class="main-nav">
+        <a href="#">Мероприятия</a>
+        <a href="#">Отчеты</a>
+        <a href="#">Панель администратора</a>
+    </nav>
+
+</header>
+<header class="header">
+    <h1>Карточка мероприятия</h1>
+
+    <div class="header-actions">
+        <button class="edit-btn">Редактировать</button>
+        <button class="secondary-btn">Назад</button>
+    </div>
+</header>
+
+<main class="content event-view">
+
+    <section class="form-section">
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <div class="info-label">Название</div>
+                <div class="info-value">
+                    Концерт ко Дню города
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Дата проведения</div>
+                <div class="info-value">
+                    15.09.2026
+                </div>
+            </div>
+
+            <div class="info-item full-width">
+                <div class="info-label">Описание</div>
+                <div class="info-value">
+                    Праздничное мероприятие для жителей города
+                    с концертной программой, интерактивными зонами
+                    и выступлением творческих коллективов.
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Категория</div>
+                <div class="info-value">
+                    Городское
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-label">Ответственный сотрудник</div>
+                <div class="info-value">
+                    Иванов И.И.
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="form-section">
+
+        <h2>Документы</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Файл</th>
+                    <th>Тип</th>
+                    <th>Действие</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Афиша.pdf</td>
+                    <td>PDF</td>
+                    <td>
+                        <button class="secondary-btn">
+                            Скачать
+                        </button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Смета.xlsx</td>
+                    <td>XLSX</td>
+                    <td>
+                        <button class="secondary-btn">
+                            Скачать
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </section>
+
+</main>
+
+</body>

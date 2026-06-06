@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from pydantic import EmailStr, Field
 
 from app.models.enums import Role
@@ -11,6 +9,13 @@ class UserCreate(BaseSchema):
     password: str = Field(min_length=8, max_length=72)
     full_name: str = Field(min_length=1, max_length=255)
     role: Role = Role.EMPLOYEE
+    su_id: int
+
+
+class UserUpdate(BaseSchema):
+    full_name: str | None = Field(None, min_length=1, max_length=255)
+    role: Role | None = None
+    su_id: int | None = None
 
 
 class UserResponse(BaseSchema):
@@ -18,5 +23,4 @@ class UserResponse(BaseSchema):
     email: EmailStr
     full_name: str
     role: Role
-    is_active: bool
-    created_at: datetime
+    su_id: int

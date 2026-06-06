@@ -27,6 +27,7 @@ class AuthService(BaseService):
             hashed_password=hash_password(user_data.password),
             full_name=user_data.full_name,
             role=user_data.role,
+            su_id=user_data.su_id,
         )
         await self.session.commit()
         return user

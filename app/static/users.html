@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пользователи</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="main-header">
+
+    <div class="logo">
+        Система мероприятий
+    </div>
+
+    <nav class="main-nav">
+        <a href="#">Мероприятия</a>
+        <a href="#">Отчеты</a>
+        <a href="#">Панель администратора</a>
+    </nav>
+
+</header>
+<header class="header">
+    <h1>Управление пользователями и СП</h1>
+
+    <div class="header-actions">
+        <button>Добавить пользователя</button>
+        <button>Добавить СП</button>
+    </div>
+</header>
+
+<main class="content">
+
+    <section class="block">
+        <h2>Пользователи</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ФИО</th>
+                    <th>Email</th>
+                    <th>Должность</th>
+                    <th>СП</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Иванов И.И.</td>
+                    <td>ivanov@mail.ru</td>
+                    <td>Руководитель СП</td>
+                    <td>Ретро</td>
+                    <td class="actions">
+                        <button class="edit-btn">Редактировать</button>
+                        <button class="delete-btn">Удалить</button>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Петрова А.А.</td>
+                    <td>petrova@mail.ru</td>
+                    <td>Художественный руководитель</td>
+                    <td>Отдел краеведения</td>
+                    <td class="actions">
+                        <button class="edit-btn">Редактировать</button>
+                        <button class="delete-btn">Удалить</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+
+    <section class="block">
+        <h2>Структурные подразделения</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Адрес</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Ретро</td>
+                    <td>г. Фрязино, ул. Полевая, д. 6</td>
+                </tr>
+
+                <tr>
+                    <td>Отдел краеведения</td>
+                    <td>г. Фрязино, ул. Комсомольская, д. 28</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+</main>
+
+<!-- <div class="modal" id="user-create-modal">
+    <div class="modal-content">
+
+        <h2>Добавление/редактирование пользователя</h2>
+
+        <form class="modal-form">
+
+            <div class="field">
+                <label>ФИО</label>
+                <input type="text" placeholder="Иванов Иван Иванович">
+            </div>
+
+            <div class="field">
+                <label>Email</label>
+                <input type="email" placeholder="user@mail.ru">
+            </div>
+
+            <div class="field">
+                <label>Должность</label>
+                <input type="text" placeholder="Руководитель СП">
+            </div>
+
+            <div class="field">
+                <label>Структурное подразделение</label>
+                <select>
+                    <option>Ретро</option>
+                    <option>Отдел краеведения</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="edit-btn">Создать</button>
+                <button type="button" class="secondary-btn">Отмена</button>
+            </div>
+
+        </form>
+
+    </div>
+</div> -->
+
+<!-- <div class="modal" id="user-edit-modal">
+    <div class="modal-content">
+
+        <h2>Редактирование пользователя</h2>
+
+        <form class="modal-form">
+
+            <div class="field">
+                <label>ФИО</label>
+                <input type="text" value="Иванов И.И.">
+            </div>
+
+            <div class="field">
+                <label>Email</label>
+                <input type="email" value="ivanov@mail.ru">
+            </div>
+
+            <div class="field">
+                <label>Должность</label>
+                <input type="text" value="Руководитель СП">
+            </div>
+
+            <div class="field">
+                <label>Структурное подразделение</label>
+                <select>
+                    <option selected>Ретро</option>
+                    <option>Отдел краеведения</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="edit-btn">Сохранить</button>
+                <button type="button" class="secondary-btn">Отмена</button>
+            </div>
+
+        </form>
+
+    </div>
+</div> -->
+
+<!-- <div class="modal" id="user-delete-modal">
+    <div class="modal-content small-modal">
+
+        <h2>Удаление пользователя</h2>
+
+        <p>
+            Вы действительно хотите удалить пользователя
+            <b>Иванов И.И.</b>?
+        </p>
+
+        <div class="modal-actions">
+            <button class="delete-btn">Удалить</button>
+            <button class="secondary-btn">Отмена</button>
+        </div>
+
+    </div>
+</div> -->
+
+<!-- <div class="modal" id="sp-create-modal">
+    <div class="modal-content">
+
+        <h2>Добавление/редактирование СП</h2>
+
+        <form class="modal-form">
+
+            <div class="field">
+                <label>Название</label>
+                <input type="text" placeholder="Отдел краеведения">
+            </div>
+
+            <div class="field">
+                <label>Адрес</label>
+                <input type="text" placeholder="г. Фрязино, ул. Комсомольская, д. 28">
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="edit-btn">Создать</button>
+                <button type="button" class="secondary-btn">Отмена</button>
+            </div>
+
+        </form>
+
+    </div>
+</div> -->
+
+<!-- <div class="modal" id="sp-edit-modal">
+    <div class="modal-content">
+
+        <h2>Редактирование СП</h2>
+
+        <form class="modal-form">
+
+            <div class="field">
+                <label>Название</label>
+                <input type="text" value="Ретро">
+            </div>
+
+            <div class="field">
+                <label>Адрес</label>
+                <input type="text" value="г. Фрязино, ул. Полевая, д. 6">
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="edit-btn">Сохранить</button>
+                <button type="button" class="secondary-btn">Отмена</button>
+            </div>
+
+        </form>
+
+    </div>
+</div> -->
+
+<div class="modal" id="sp-delete-modal">
+    <div class="modal-content small-modal">
+
+        <h2>Удаление структурного подразделения</h2>
+
+        <p>
+            Вы действительно хотите удалить СП
+            <b>Ретро</b>?
+        </p>
+
+        <div class="modal-actions">
+            <button class="delete-btn">Удалить</button>
+            <button class="secondary-btn">Отмена</button>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>

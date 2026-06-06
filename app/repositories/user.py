@@ -14,6 +14,10 @@ class UserRepository(BaseRepository[User]):
         result = await self.session.execute(select(User).where(User.email == email))
         return result.scalar_one_or_none()
 
+    async def get_all(self) -> list[User]:
+        result = await self.session.execute(select(User).order_by(User.full_name))
+        return list(result.scalars().all())
+
     async def create(
         self,
         *,
@@ -21,15 +25,28 @@ class UserRepository(BaseRepository[User]):
         hashed_password: str,
         full_name: str,
         role: Role,
+        su_id: int,
     ) -> User:
         user = User(
             email=email,
             hashed_password=hashed_password,
             full_name=full_name,
             role=role,
-            is_active=True,
+            su_id=su_id,
         )
         self.session.add(user)
         await self.session.flush()
         await self.session.refresh(user)
         return user
+
+    async def update(self, user: User, **kwargs) -> User:
+        for key, value in kwargs.items():
+            if value is not None:
+                setattr(user, key, value)
+        await self.session.flush()
+        await self.session.refresh(user)
+        return user
+
+    async def delete(self, user: User) -> None:
+        await self.session.delete(user)
+        await self.session.flush()

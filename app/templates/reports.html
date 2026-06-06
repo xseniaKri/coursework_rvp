@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Отчетность{% endblock %}
+
+{% block content %}
+<header class="header">
+    <h1>Отчетность и статистика</h1>
+</header>
+
+<main class="dashboard">
+    <div class="stats-grid">
+        <div class="card">
+            <h2>Мероприятий за месяц</h2>
+            <p style="font-size: 2.5rem; font-weight: bold; margin: 0;">{{ events_this_month }}</p>
+        </div>
+    </div>
+
+    <section class="reports" style="margin-top: 24px;">
+        <h2>Формирование отчетов</h2>
+        <div style="display:flex; flex-direction:column; gap:12px; max-width:320px; margin-top:16px;">
+            <button onclick="alert('Функция в разработке')">Сформировать месячный отчет</button>
+            <button onclick="alert('Функция в разработке')">Сформировать отчет по сотрудникам</button>
+            <button onclick="alert('Функция в разработке')">Сформировать отчет по СП</button>
+        </div>
+    </section>
+</main>
+{% endblock %}
