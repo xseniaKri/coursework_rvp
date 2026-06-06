@@ -11,12 +11,12 @@ from app.repositories.base import BaseRepository
 class EventRepository(BaseRepository[Event]):
     def _base_query(self):
         from app.models.event_history import EventHistory
-        from app.models.user import User as UserModel
         return select(Event).options(
             selectinload(Event.category),
             selectinload(Event.author),
             selectinload(Event.responsible),
             selectinload(Event.history).selectinload(EventHistory.user),
+            selectinload(Event.files),
         )
 
     async def get_all(

@@ -62,6 +62,35 @@
             </div>
         </section>
 
+        {% if event and event.files %}
+        <section class="form-section">
+            <h2>Прикреплённые файлы</h2>
+            <table>
+                <thead>
+                    <tr><th>Название</th><th>Тип</th><th>Загружен</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for f in event.files %}
+                    <tr>
+                        <td><a href="/api/files/{{ f.id }}/download" target="_blank">{{ f.file_name }}</a></td>
+                        <td>{{ f.file_type }}</td>
+                        <td>{{ f.uploaded_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                        <td><button type="button" class="delete-btn" onclick="deleteFile({{ f.id }})">Удалить</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        {% endif %}
+
+        <section class="form-section">
+            <h2>Добавить файлы</h2>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <input type="file" id="file-input" multiple style="flex:1; min-width:200px;">
+            </div>
+            <p style="margin-top:6px; color:#888; font-size:0.85em;">Файлы будут прикреплены после сохранения мероприятия</p>
+        </section>
+
         <div style="padding: 0 0 20px 0; display:flex; gap:10px;">
             <button type="submit">{{ 'Сохранить' if event else 'Создать' }}</button>
             <button type="button" class="secondary-btn" onclick="history.back()">Отмена</button>
@@ -167,11 +196,24 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
 
     if (resp.ok) {
         const data = await resp.json();
+        const files = document.getElementById('file-input').files;
+        for (const file of files) {
+            const fd = new FormData();
+            fd.append('file', file);
+            await fetch(`/api/events/${data.id}/files`, { method: 'POST', body: fd });
+        }
         location.href = `/events/${data.id}`;
     } else {
         const err = await resp.json().catch(() => ({}));
         alert('Ошибка: ' + (err.detail || resp.status));
     }
 });
+
+async function deleteFile(fileId) {
+    if (!confirm('Удалить файл?')) return;
+    const r = await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+    if (r.ok) location.reload();
+    else alert('Ошибка при удалении файла');
+}
 </script>
 {% endblock %}

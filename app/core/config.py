@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     postgres_user: str = "postgres"
     postgres_password: str = "postgres"
 
+    upload_dir: str = "uploads"
+
     jwt_secret_key: str = Field(default="change-me", min_length=8)
     jwt_algorithm: str = "HS256"
     jwt_access_token_expire_minutes: int = 30

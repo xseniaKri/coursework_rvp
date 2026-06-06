@@ -71,6 +71,43 @@
     </section>
     {% endif %}
 
+    <section class="form-section">
+        <h2>Файлы</h2>
+        {% if event.files %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Тип</th>
+                    <th>Загружен</th>
+                    {% if can_edit %}<th></th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in event.files %}
+                <tr>
+                    <td><a href="/api/files/{{ f.id }}/download" target="_blank">{{ f.file_name }}</a></td>
+                    <td>{{ f.file_type }}</td>
+                    <td>{{ f.uploaded_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                    {% if can_edit %}
+                    <td><button class="delete-btn" onclick="deleteFile({{ f.id }})">Удалить</button></td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color:#888;">Файлы не прикреплены</p>
+        {% endif %}
+
+        {% if can_edit %}
+        <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <input type="file" id="file-upload" multiple style="flex:1; min-width:200px;">
+            <button class="edit-btn" onclick="uploadFiles()">Загрузить</button>
+        </div>
+        {% endif %}
+    </section>
+
     {% if event.history %}
     <section class="form-section">
         <h2>История изменений</h2>
@@ -103,6 +140,29 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+async function uploadFiles() {
+    const input = document.getElementById('file-upload');
+    if (!input || !input.files.length) { alert('Выберите файлы'); return; }
+    let hasError = false;
+    for (const file of input.files) {
+        const fd = new FormData();
+        fd.append('file', file);
+        const r = await fetch('/api/events/{{ event.id }}/files', { method: 'POST', body: fd });
+        if (!r.ok) hasError = true;
+    }
+    if (hasError) alert('Не удалось загрузить один или несколько файлов');
+    location.reload();
+}
+
+async function deleteFile(fileId) {
+    if (!confirm('Удалить файл?')) return;
+    const r = await fetch(`/api/files/${fileId}`, { method: 'DELETE' });
+    if (r.ok) location.reload();
+    else alert('Ошибка при удалении файла');
+}
+</script>
+
 {% if allowed_statuses %}
 <script>
 async function changeStatus() {

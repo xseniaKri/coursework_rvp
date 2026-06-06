@@ -9,6 +9,7 @@ from app.models.enums import EventStatus
 
 if TYPE_CHECKING:
     from app.models.event_history import EventHistory
+    from app.models.file import File
     from app.models.user import User
     from app.models.category import Category
 
@@ -56,4 +57,9 @@ class Event(Base):
         back_populates="event",
         cascade="all, delete-orphan",
         order_by="EventHistory.created_at",
+    )
+    files: Mapped[list["File"]] = relationship(
+        back_populates="event",
+        cascade="all, delete-orphan",
+        order_by="File.uploaded_at",
     )
