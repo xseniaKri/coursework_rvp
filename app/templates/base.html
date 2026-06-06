@@ -16,7 +16,9 @@
         <a href="/admin">Панель администратора</a>
         {% else %}
         <a href="/events">Мероприятия</a>
+        {% if current_user.role == 'ART_DIRECTOR' %}
         <a href="/reports">Отчеты</a>
+        {% endif %}
         {% endif %}
         <a href="/logout" style="color:#c00">Выйти</a>
     </nav>

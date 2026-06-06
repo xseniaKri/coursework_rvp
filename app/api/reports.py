@@ -129,7 +129,6 @@ async def employees_report(
     completed_str = str(EventStatus.COMPLETED)
     df_completed = df_events[df_events["status"] == completed_str] if not df_events.empty else df_events.copy()
 
-    # Created count
     created = (
         df_events.groupby("author_id").size()
         .reset_index(name="Создано мероприятий")
@@ -138,7 +137,6 @@ async def employees_report(
         else pd.DataFrame(columns=["id", "Создано мероприятий"])
     )
 
-    # Conducted count (responsible + COMPLETED)
     conducted = (
         df_completed.dropna(subset=["responsible_id"])
         .groupby("responsible_id").size()
@@ -159,7 +157,6 @@ async def employees_report(
     summary["Создано мероприятий"] = summary["Создано мероприятий"].astype(int)
     summary["Проведено мероприятий"] = summary["Проведено мероприятий"].astype(int)
 
-    # By-category pivot
     if not df_completed.empty and df_completed["responsible_id"].notna().any():
         cat_df = df_completed.dropna(subset=["responsible_id"]).copy()
         cat_df["responsible_id"] = cat_df["responsible_id"].astype(int)
@@ -215,7 +212,6 @@ async def structure_units_report(
         for r in ev_rows
     ]) if ev_rows else pd.DataFrame(columns=["category", "resp_su_id"])
 
-    # Employee count per SU
     emp_count = (
         df_users.groupby("su_id").size()
         .reset_index(name="Кол-во сотрудников")
@@ -223,7 +219,6 @@ async def structure_units_report(
         else pd.DataFrame(columns=["su_id", "Кол-во сотрудников"])
     )
 
-    # Conducted count per SU
     conducted = (
         df_completed.dropna(subset=["resp_su_id"])
         .groupby("resp_su_id").size()
@@ -244,7 +239,6 @@ async def structure_units_report(
     summary["Кол-во сотрудников"] = summary["Кол-во сотрудников"].astype(int)
     summary["Проведено мероприятий"] = summary["Проведено мероприятий"].astype(int)
 
-    # By-category pivot
     if not df_completed.empty and df_completed["resp_su_id"].notna().any():
         cat_df = df_completed.dropna(subset=["resp_su_id"]).copy()
         cat_df["resp_su_id"] = cat_df["resp_su_id"].astype(int)

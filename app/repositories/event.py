@@ -23,14 +23,48 @@ class EventRepository(BaseRepository[Event]):
         self,
         status: EventStatus | None = None,
         search: str | None = None,
+        responsible_id: int | None = None,
+        su_id: int | None = None,
+        offset: int = 0,
+        limit: int | None = None,
     ) -> list[Event]:
         q = self._base_query().order_by(Event.planned_date.desc())
         if status:
             q = q.where(Event.status == status)
         if search:
             q = q.where(Event.title.ilike(f"%{search}%"))
+        if responsible_id is not None:
+            q = q.where(Event.responsible_id == responsible_id)
+        if su_id is not None:
+            from app.models.user import User as UserModel
+            q = q.join(UserModel, Event.responsible_id == UserModel.id).where(UserModel.su_id == su_id)
+        if offset:
+            q = q.offset(offset)
+        if limit is not None:
+            q = q.limit(limit)
         result = await self.session.execute(q)
         return list(result.scalars().all())
+
+    async def count_all(
+        self,
+        status: EventStatus | None = None,
+        search: str | None = None,
+        responsible_id: int | None = None,
+        su_id: int | None = None,
+    ) -> int:
+        from sqlalchemy import func
+        q = select(func.count(Event.id))
+        if status:
+            q = q.where(Event.status == status)
+        if search:
+            q = q.where(Event.title.ilike(f"%{search}%"))
+        if responsible_id is not None:
+            q = q.where(Event.responsible_id == responsible_id)
+        if su_id is not None:
+            from app.models.user import User as UserModel
+            q = q.join(UserModel, Event.responsible_id == UserModel.id).where(UserModel.su_id == su_id)
+        result = await self.session.execute(q)
+        return result.scalar_one()
 
     async def get_by_id(self, event_id: int) -> Event | None:
         result = await self.session.execute(

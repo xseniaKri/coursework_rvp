@@ -21,21 +21,49 @@ from app.web.templates import templates
 
 router = APIRouter()
 
+PAGE_SIZE = 10
+
 
 @router.get("/events", response_class=HTMLResponse)
 async def events_list(
     request: Request,
     search: str = "",
     status: str = "",
+    page: int = 1,
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user_from_cookie),
 ):
     if current_user.role == Role.ADMIN:
         return RedirectResponse(url="/admin", status_code=302)
+
     status_filter = EventStatus(status) if status else None
-    events = await EventRepository(session).get_all(
+
+    responsible_id = None
+    su_id = None
+    if current_user.role == Role.EMPLOYEE:
+        responsible_id = current_user.id
+    elif current_user.role == Role.DEPARTMENT_HEAD:
+        su_id = current_user.su_id
+
+    repo = EventRepository(session)
+    total = await repo.count_all(
         status=status_filter,
         search=search or None,
+        responsible_id=responsible_id,
+        su_id=su_id,
+    )
+
+    page = max(1, page)
+    total_pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE)
+    page = min(page, total_pages)
+
+    events = await repo.get_all(
+        status=status_filter,
+        search=search or None,
+        responsible_id=responsible_id,
+        su_id=su_id,
+        offset=(page - 1) * PAGE_SIZE,
+        limit=PAGE_SIZE,
     )
 
     editable_ids = {e.id for e in events if can_edit_event(current_user, e)}
@@ -51,6 +79,9 @@ async def events_list(
         "can_create": can_create_event(current_user),
         "editable_ids": editable_ids,
         "can_delete": can_delete,
+        "page": page,
+        "total_pages": total_pages,
+        "total": total,
     })
 
 

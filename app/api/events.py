@@ -60,7 +60,6 @@ async def create_event(
     if not can_create_event(current_user):
         _403()
 
-    # Только DEPARTMENT_HEAD и ART_DIRECTOR могут назначать ответственного
     responsible_id = data.responsible_id
     if responsible_id is not None and not can_assign_responsible(current_user):
         responsible_id = None
@@ -91,7 +90,6 @@ async def update_event(
 
     updates = data.model_dump(exclude_none=True)
 
-    # EMPLOYEE не может менять ответственного
     if not can_assign_responsible(current_user):
         updates.pop("responsible_id", None)
 

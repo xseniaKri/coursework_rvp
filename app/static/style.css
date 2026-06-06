@@ -334,3 +334,39 @@ textarea {
 
     border-radius: 6px;
 }
+.pagination {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+.page-btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #2d6cdf;
+    background: #fff;
+    cursor: pointer;
+}
+
+.page-btn:hover {
+    background: #e8f0fe;
+}
+
+.page-btn.active {
+    background: #2d6cdf;
+    color: #fff;
+    border-color: #2d6cdf;
+    pointer-events: none;
+}
+
+.page-btn.disabled {
+    color: #aaa;
+    border-color: #eee;
+    cursor: default;
+    pointer-events: none;
+}

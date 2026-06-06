@@ -10,7 +10,6 @@ from app.models.enums import Role
 from app.models.user import User
 from app.repositories.user import UserRepository
 
-# auto_error=False — не бросаем 401 сразу, сами проверим cookie как запасной вариант
 _oauth2 = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
 
@@ -19,7 +18,6 @@ async def get_current_user(
     bearer_token: str | None = Depends(_oauth2),
     session: AsyncSession = Depends(get_db),
 ) -> User:
-    """Принимает JWT из заголовка Authorization: Bearer ИЛИ из httpOnly cookie access_token."""
     token = bearer_token or request.cookies.get("access_token")
     if not token:
         raise HTTPException(
@@ -46,7 +44,6 @@ async def get_current_user(
     return user
 
 
-# Оставляем алиас для обратной совместимости
 get_current_user_flexible = get_current_user
 
 
@@ -62,5 +59,4 @@ def require_roles(allowed_roles: Sequence[Role]):
     return dependency
 
 
-# Алиас
 require_roles_flexible = require_roles
