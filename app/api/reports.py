@@ -39,6 +39,21 @@ def _last_month() -> tuple[int, int]:
     return today.month, today.year
 
 
+def _mode_or_dash(series: pd.Series) -> str:
+    if series.empty:
+        return "-"
+    counts = series.value_counts()
+    if len(counts) == 1 or counts.iloc[0] > counts.iloc[1]:
+        return str(counts.index[0])
+    return "-"
+
+
+def _fmt_pct(val: float | None) -> str:
+    if val is None or pd.isna(val):
+        return "—"
+    return f"{val:.1f}%"
+
+
 @router.get("/monthly")
 async def monthly_report(
     session: AsyncSession = Depends(get_db),
@@ -80,10 +95,12 @@ async def monthly_report(
         else pd.DataFrame({"Категория": [], "Проведено": []})
     )
 
+    top_category = _mode_or_dash(df["category"]) if not df.empty else "-"
+
     month_label = MONTH_NAMES_RU[month]
     summary_df = pd.DataFrame({
-        "Показатель": ["Проведено мероприятий", "Запланировано мероприятий"],
-        "Значение": [completed_count, planned_count],
+        "Показатель": ["Проведено мероприятий", "Запланировано мероприятий", "Самая частая категория"],
+        "Значение": [completed_count, planned_count, top_category],
     })
 
     buf = io.BytesIO()
@@ -127,6 +144,9 @@ async def employees_report(
     df_users = pd.DataFrame([{"id": r["id"], "Сотрудник": r["full_name"]} for r in user_rows])
 
     completed_str = str(EventStatus.COMPLETED)
+    rejected_str = str(EventStatus.REJECTED)
+    planned_str = str(EventStatus.PLANNED)
+
     df_completed = df_events[df_events["status"] == completed_str] if not df_events.empty else df_events.copy()
 
     created = (
@@ -148,14 +168,54 @@ async def employees_report(
     if not conducted.empty:
         conducted["id"] = conducted["id"].astype(int)
 
-    summary = (
-        df_users
-        .merge(created, on="id", how="left")
-        .merge(conducted, on="id", how="left")
-        .fillna(0)
-    )
-    summary["Создано мероприятий"] = summary["Создано мероприятий"].astype(int)
-    summary["Проведено мероприятий"] = summary["Проведено мероприятий"].astype(int)
+    if not df_events.empty:
+        total_by_author = (
+            df_events.groupby("author_id").size()
+            .reset_index(name="total")
+            .rename(columns={"author_id": "id"})
+        )
+        rejected_by_author = (
+            df_events[df_events["status"] == rejected_str]
+            .groupby("author_id").size()
+            .reset_index(name="rejected")
+            .rename(columns={"author_id": "id"})
+        )
+        rej = total_by_author.merge(rejected_by_author, on="id", how="left").fillna(0)
+        rej["% отклоненных"] = (rej["rejected"] / rej["total"] * 100).round(1)
+        rejection_rate = rej[["id", "% отклоненных"]]
+    else:
+        rejection_rate = pd.DataFrame(columns=["id", "% отклоненных"])
+
+    if not df_events.empty and df_events["responsible_id"].notna().any():
+        df_resp = df_events.dropna(subset=["responsible_id"]).copy()
+        df_resp["responsible_id"] = df_resp["responsible_id"].astype(int)
+        df_resp_pc = df_resp[df_resp["status"].isin([planned_str, completed_str])]
+        total_pc = (
+            df_resp_pc.groupby("responsible_id").size()
+            .reset_index(name="total_pc")
+            .rename(columns={"responsible_id": "id"})
+        )
+        count_planned_resp = (
+            df_resp[df_resp["status"] == planned_str]
+            .groupby("responsible_id").size()
+            .reset_index(name="planned_count")
+            .rename(columns={"responsible_id": "id"})
+        )
+        pl = total_pc.merge(count_planned_resp, on="id", how="left").fillna(0)
+        pl["% незавершённых"] = (pl["planned_count"] / pl["total_pc"] * 100).round(1)
+        planned_rate = pl[["id", "% незавершённых"]]
+    else:
+        planned_rate = pd.DataFrame(columns=["id", "% незавершённых"])
+
+    summary = df_users.copy()
+    summary = summary.merge(created, on="id", how="left")
+    summary = summary.merge(conducted, on="id", how="left")
+    summary["Создано мероприятий"] = summary["Создано мероприятий"].fillna(0).astype(int)
+    summary["Проведено мероприятий"] = summary["Проведено мероприятий"].fillna(0).astype(int)
+    summary = summary.merge(rejection_rate, on="id", how="left")
+    summary = summary.merge(planned_rate, on="id", how="left")
+    summary["% отклоненных"] = summary["% отклоненных"].apply(_fmt_pct)
+    summary["% незавершённых"] = summary["% незавершённых"].apply(_fmt_pct)
 
     if not df_completed.empty and df_completed["responsible_id"].notna().any():
         cat_df = df_completed.dropna(subset=["responsible_id"]).copy()
