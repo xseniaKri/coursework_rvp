@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 from sqlalchemy import Boolean, DateTime, Enum, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.core.database import Base
-from src.models.enums import Role
+from app.core.database import Base
+from app.models.enums import Role
 
 if TYPE_CHECKING:
-    from src.models.event import Event
-    from src.models.event_history import EventHistory
+    from app.models.event import Event
+    from app.models.event_history import EventHistory
 
 
 class User(Base):

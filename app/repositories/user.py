@@ -1,8 +1,8 @@
 from sqlalchemy import select
 
-from src.models.enums import Role
-from src.models.user import User
-from src.repositories.base import BaseRepository
+from app.models.enums import Role
+from app.models.user import User
+from app.repositories.base import BaseRepository
 
 
 class UserRepository(BaseRepository[User]):

@@ -4,7 +4,7 @@ from typing import Any
 import bcrypt
 from jose import JWTError, jwt
 
-from src.core.config import settings
+from app.core.config import settings
 
 
 def hash_password(password: str) -> str:

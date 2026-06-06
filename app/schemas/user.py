@@ -2,8 +2,8 @@ from datetime import datetime
 
 from pydantic import EmailStr, Field
 
-from src.models.enums import Role
-from src.schemas.base import BaseSchema
+from app.models.enums import Role
+from app.schemas.base import BaseSchema
 
 
 class UserCreate(BaseSchema):

@@ -1,6 +1,6 @@
 from pydantic import EmailStr, Field
 
-from src.schemas.base import BaseSchema
+from app.schemas.base import BaseSchema
 
 
 class LoginRequest(BaseSchema):

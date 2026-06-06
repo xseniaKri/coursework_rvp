@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     project_name: str = "Culture Document Flow API"
     app_env: str = "local"
     debug: bool = Field(default=True, validation_alias="APP_DEBUG")
-    api_v1_prefix: str = "/api/v1"
+    api_v1_prefix: str = "/api"
 
     postgres_host: str = "localhost"
     postgres_port: int = 5432
