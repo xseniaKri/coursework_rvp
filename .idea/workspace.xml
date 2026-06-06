@@ -5,38 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="00cb1b44-e1d1-4577-8d23-7582cfc8d878" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/migrations/README" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/README" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/script.py.mako" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/script.py.mako" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/versions/20260528_0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/versions/20260528_0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/versions/20260528_0002_create_user_event_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/versions/20260528_0002_create_user_event_models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/api/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/api/dependencies.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/dependencies.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/api/router.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/router.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/api/v1/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/api/v1/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/api/v1/health.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/core/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/core/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/core/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/core/security.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/core/security.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/models/enums.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/enums.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/models/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/event.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/models/event_history.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/event_history.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/repositories/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repositories/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/repositories/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repositories/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/repositories/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/repositories/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/schemas/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/schemas/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/schemas/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/schemas/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/schemas/user.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/services/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/services/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/services/base.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/category.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/structure_unit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/alembic.ini" beforeDir="false" afterPath="$PROJECT_DIR$/alembic.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/event.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/event.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/script.py.mako" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/20260528_0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/20260528_0002_create_user_event_models.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +38,9 @@
   &quot;fromUser&quot;: false
 }</component>
   <component name="ProjectId" id="3EewzNwoZO9V6pkUJKsm2EfF22t" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />

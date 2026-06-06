@@ -10,6 +10,7 @@ from app.models.enums import EventStatus
 if TYPE_CHECKING:
     from app.models.event_history import EventHistory
     from app.models.user import User
+    from app.models.category import Category
 
 
 class Event(Base):
@@ -18,7 +19,7 @@ class Event(Base):
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    event_type: Mapped[str] = mapped_column(String(100), nullable=False)
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"), nullable=False)
     status: Mapped[EventStatus] = mapped_column(
         Enum(EventStatus, name="event_status"),
         nullable=False,
@@ -39,6 +40,10 @@ class Event(Base):
         nullable=False,
     )
 
+    category: Mapped["Category"] = relationship(
+        back_populates="event",
+        foreign_keys=[category_id],
+    )
     author: Mapped["User"] = relationship(
         back_populates="authored_events",
         foreign_keys=[author_id],
