@@ -45,7 +45,7 @@
 
             <div class="info-item">
                 <div class="info-label">Статус</div>
-                <div class="info-value">{{ event.status }}</div>
+                <div class="info-value">{{ STATUS_NAMES[event.status] }}</div>
             </div>
 
             <div class="info-item">
@@ -62,7 +62,7 @@
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
             <select id="new-status">
                 {% for s in allowed_statuses %}
-                <option value="{{ s }}" {% if event.status == s %}selected{% endif %}>{{ s }}</option>
+                <option value="{{ s }}" {% if event.status == s %}selected{% endif %}>{{ STATUS_NAMES[s] }}</option>
                 {% endfor %}
             </select>
             <input type="text" id="status-comment" placeholder="Комментарий (необязательно)" style="width:250px;">
@@ -89,8 +89,8 @@
                 <tr>
                     <td>{{ h.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
                     <td>{{ h.user.full_name }}</td>
-                    <td>{{ h.old_status or '—' }}</td>
-                    <td>{{ h.new_status }}</td>
+                    <td>{{ STATUS_NAMES[h.old_status] if h.old_status else '—' }}</td>
+                    <td>{{ STATUS_NAMES[h.new_status] }}</td>
                     <td>{{ h.comment or '—' }}</td>
                 </tr>
                 {% endfor %}

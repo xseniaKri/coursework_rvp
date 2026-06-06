@@ -16,7 +16,7 @@
         <select name="status" onchange="this.form.submit()">
             <option value="">Все статусы</option>
             {% for s in statuses %}
-            <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+            <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ STATUS_NAMES[s] }}</option>
             {% endfor %}
         </select>
         <button type="submit">Найти</button>
@@ -47,7 +47,7 @@
                 <td>{{ event.planned_date.strftime('%d.%m.%Y') }}</td>
                 <td>{{ event.category.name }}</td>
                 <td>{{ event.responsible.full_name if event.responsible else '—' }}</td>
-                <td>{{ event.status }}</td>
+                <td>{{ STATUS_NAMES[event.status] }}</td>
                 {% if editable_ids or can_delete %}
                 <td class="actions">
                     {% if can_edit_this %}

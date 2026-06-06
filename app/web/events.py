@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -18,9 +17,9 @@ from app.repositories.category import CategoryRepository
 from app.repositories.event import EventRepository
 from app.repositories.user import UserRepository
 from app.web.dependencies import get_current_user_from_cookie
+from app.web.templates import templates
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/events", response_class=HTMLResponse)

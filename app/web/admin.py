@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -9,9 +8,9 @@ from app.models.user import User
 from app.repositories.structure_unit import StructureUnitRepository
 from app.repositories.user import UserRepository
 from app.web.dependencies import get_current_user_from_cookie
+from app.web.templates import templates
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
 
 
 def _require_admin(current_user: User) -> None:
