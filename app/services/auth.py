@@ -40,11 +40,6 @@ class AuthService(BaseService):
                 detail="Incorrect email or password",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-        if not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="User account is inactive",
-            )
         return user
 
     async def login(self, credentials: LoginRequest) -> TokenResponse:

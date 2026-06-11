@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import require_roles_flexible
+from app.api.dependencies import require_roles
 from app.core.database import get_db
 from app.core.security import hash_password
 from app.models.enums import Role
@@ -11,7 +11,7 @@ from app.schemas.user import UserCreate, UserResponse, UserUpdate
 
 router = APIRouter()
 
-_admin_only = [Depends(require_roles_flexible([Role.ADMIN]))]
+_admin_only = [Depends(require_roles([Role.ADMIN]))]
 
 
 @router.get("", response_model=list[UserResponse], dependencies=_admin_only)

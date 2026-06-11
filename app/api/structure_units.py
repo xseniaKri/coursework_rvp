@@ -5,11 +5,10 @@ from app.api.dependencies import get_current_user, require_roles
 from app.core.database import get_db
 from app.models.enums import Role
 from app.models.structure_unit import StructureUnit
-from app.models.user import User
 from app.repositories.structure_unit import StructureUnitRepository
 from app.schemas.structure_unit import StructureUnitCreate, StructureUnitResponse, StructureUnitUpdate
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 async def _get_su_or_404(su_id: int, session: AsyncSession) -> StructureUnit:
@@ -22,7 +21,6 @@ async def _get_su_or_404(su_id: int, session: AsyncSession) -> StructureUnit:
 @router.get("", response_model=list[StructureUnitResponse])
 async def list_structure_units(
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ) -> list[StructureUnit]:
     return await StructureUnitRepository(session).get_all()
 

@@ -15,7 +15,7 @@ from app.repositories.event import EventRepository
 from app.repositories.file import FileRepository
 from app.schemas.file import FileResponse as FileResponseSchema
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 async def _get_event_or_404(event_id: int, session: AsyncSession):
@@ -70,7 +70,6 @@ async def upload_file(
 async def download_file(
     file_id: int,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ):
     db_file = await _get_file_or_404(file_id, session)
 

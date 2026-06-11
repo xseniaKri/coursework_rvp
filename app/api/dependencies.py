@@ -44,9 +44,6 @@ async def get_current_user(
     return user
 
 
-get_current_user_flexible = get_current_user
-
-
 def require_roles(allowed_roles: Sequence[Role]):
     async def dependency(current_user: User = Depends(get_current_user)) -> User:
         if current_user.role not in allowed_roles:
@@ -57,6 +54,3 @@ def require_roles(allowed_roles: Sequence[Role]):
         return current_user
 
     return dependency
-
-
-require_roles_flexible = require_roles

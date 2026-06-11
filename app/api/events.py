@@ -16,7 +16,7 @@ from app.repositories.event import EventRepository
 from app.repositories.event_history import EventHistoryRepository
 from app.schemas.event import EventCreate, EventResponse, EventStatusUpdate, EventUpdate
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 def _403(detail: str = "Недостаточно прав"):
@@ -35,7 +35,6 @@ async def list_events(
     status: str | None = None,
     search: str | None = None,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ) -> list[Event]:
     from app.models.enums import EventStatus
     status_filter = EventStatus(status) if status else None
@@ -46,7 +45,6 @@ async def list_events(
 async def get_event(
     event_id: int,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ) -> Event:
     return await _get_event_or_404(event_id, session)
 

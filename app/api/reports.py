@@ -15,7 +15,7 @@ from app.models.event import Event
 from app.models.structure_unit import StructureUnit
 from app.models.user import User
 
-router = APIRouter(prefix="/reports", tags=["reports"])
+router = APIRouter(prefix="/reports", tags=["reports"], dependencies=[Depends(get_current_user)])
 
 MONTH_NAMES_RU = [
     "январь", "февраль", "март", "апрель", "май", "июнь",
@@ -57,7 +57,6 @@ def _fmt_pct(val: float | None) -> str:
 @router.get("/monthly")
 async def monthly_report(
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ):
     month, year = _last_month()
 
@@ -114,7 +113,6 @@ async def monthly_report(
 @router.get("/employees")
 async def employees_report(
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ):
     ev_result = await session.execute(
         select(
@@ -244,7 +242,6 @@ async def employees_report(
 @router.get("/structure-units")
 async def structure_units_report(
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
 ):
     su_result = await session.execute(select(StructureUnit.id, StructureUnit.name))
     u_result = await session.execute(
