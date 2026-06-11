@@ -94,7 +94,7 @@ async def monthly_report(
         else pd.DataFrame({"Категория": [], "Проведено": []})
     )
 
-    top_category = _mode_or_dash(df["category"]) if not df.empty else "-"
+    top_category = _mode_or_dash(completed_df["category"]) if not completed_df.empty else "-"
 
     month_label = MONTH_NAMES_RU[month]
     summary_df = pd.DataFrame({
