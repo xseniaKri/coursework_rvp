@@ -45,7 +45,8 @@ def _mode_or_dash(series: pd.Series) -> str:
     counts = series.value_counts()
     if len(counts) == 1 or counts.iloc[0] > counts.iloc[1]:
         return str(counts.index[0])
-    return "-"
+    max_count = counts.iloc[0]
+    return ", ".join(str(c) for c in counts[counts == max_count].index)
 
 
 def _fmt_pct(val: float | None) -> str:
