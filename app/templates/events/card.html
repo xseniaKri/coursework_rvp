@@ -22,7 +22,7 @@
 
                 <div class="field">
                     <label>Описание</label>
-                    <textarea id="description" name="description">{{ event.description if event else '' }}</textarea>
+                    <textarea id="description" name="description">{{ event.description if event and event.description not in (None, 'None') else '' }}</textarea>
                 </div>
 
                 <div class="field">
