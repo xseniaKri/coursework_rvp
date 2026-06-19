@@ -8,7 +8,7 @@ from app.models.event import Event
 from app.repositories.base import BaseRepository
 
 
-class EventRepository(BaseRepository[Event]):
+class EventRepository(BaseRepository):
     def _base_query(self):
         from app.models.event_history import EventHistory
         return select(Event).options(

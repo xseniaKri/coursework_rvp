@@ -32,13 +32,6 @@ def _xlsx_response(buf: io.BytesIO, filename: str) -> StreamingResponse:
     )
 
 
-def _last_month() -> tuple[int, int]:
-    today = date.today()
-    if today.month == 1:
-        return 12, today.year
-    return today.month, today.year
-
-
 def _mode_or_dash(series: pd.Series) -> str:
     if series.empty:
         return "-"
@@ -59,7 +52,7 @@ def _fmt_pct(val: float | None) -> str:
 async def monthly_report(
     session: AsyncSession = Depends(get_db),
 ):
-    month, year = _last_month()
+    month, year = date.today().month, date.today().year
 
     result = await session.execute(
         select(

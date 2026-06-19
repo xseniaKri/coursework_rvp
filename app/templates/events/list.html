@@ -55,7 +55,7 @@
                     {% endif %}
                     {% if can_delete %}
                     <button class="delete-btn"
-                            onclick="openDeleteModal({{ event.id }}, '{{ event.title | e }}')">
+                            onclick="openDeleteModal({{ event.id }}, '{{ event.title }}')">
                         Удалить
                     </button>
                     {% endif %}

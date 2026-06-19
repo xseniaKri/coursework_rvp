@@ -4,7 +4,7 @@ from app.models.structure_unit import StructureUnit
 from app.repositories.base import BaseRepository
 
 
-class StructureUnitRepository(BaseRepository[StructureUnit]):
+class StructureUnitRepository(BaseRepository):
     async def get_all(self) -> list[StructureUnit]:
         result = await self.session.execute(select(StructureUnit).order_by(StructureUnit.name))
         return list(result.scalars().all())

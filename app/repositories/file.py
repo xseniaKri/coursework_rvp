@@ -4,7 +4,7 @@ from app.models.file import File
 from app.repositories.base import BaseRepository
 
 
-class FileRepository(BaseRepository[File]):
+class FileRepository(BaseRepository):
     async def get_by_id(self, file_id: int) -> File | None:
         result = await self.session.execute(select(File).where(File.id == file_id))
         return result.scalar_one_or_none()

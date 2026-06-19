@@ -3,7 +3,7 @@ from app.models.event_history import EventHistory
 from app.repositories.base import BaseRepository
 
 
-class EventHistoryRepository(BaseRepository[EventHistory]):
+class EventHistoryRepository(BaseRepository):
     async def create(
         self,
         *,

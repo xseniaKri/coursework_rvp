@@ -13,18 +13,18 @@
 В системе выделяются следующие основные роли пользователей:
 
 \begin{itemize}
-	\item \textbf{Сотрудник} --- базовый пользователь системы, осуществляющий
-	      работу с карточками мероприятий, документами и отчетностью.
+	\item \textbf{"Сотрудник"} --- базовый пользователь системы, осуществляющий
+	      работу с карточками мероприятий, документами и отчетностью;
 
-	\item \textbf{Руководитель СП} --- пользователь, ответственный за создание
+	\item \textbf{"Руководитель СП"} --- пользователь, ответственный за создание
 	      мероприятий, назначение ответственных сотрудников и контроль
-	      выполнения задач. Руководитель структурного подразделения.
+	      выполнения задач. Руководитель структурного подразделения;
 
-	\item \textbf{Художественный руководитель} --- пользователь, выполняющий
+	\item \textbf{"Художественный руководитель"} --- пользователь, выполняющий
 	      согласование или отклонение мероприятий, а также формирование
-	      статистики и отчетности.
+	      статистики и отчетности;
 
-	\item \textbf{ИТ-администратор} --- пользователь, осуществляющий управление
+	\item \textbf{"ИТ-администратор"} --- пользователь, осуществляющий управление
 	      учетными записями, ролями и правами доступа.
 \end{itemize}
 
@@ -39,7 +39,7 @@
 Функциональность системы определяется процессами создания, согласования
 и сопровождения мероприятий, а также хранением связанной документации.
 
-2 Основных сценария использования системы могут быть представлены в виде
+Два сновных сценария использования системы могут быть представлены в виде
 следующих User Story:
 
 \textit{«Я, как руководитель структурного подразделения, хочу создавать
@@ -110,7 +110,7 @@
 таблице~\ref{tab:event_table}.
 
 \begin{longtable}{|p{3.5cm}|p{3cm}|p{7cm}|}
-	\caption{Структура таблицы мероприятий (\texttt{event})}
+	\caption{Структура таблицы мероприятий}
 	\label{tab:event_table} \\
 
 	\hline
@@ -125,10 +125,12 @@
 	title & VARCHAR & Название мероприятия \\ \hline
 	description & TEXT & Описание мероприятия \\ \hline
 	category\_id & INT & Ссылка на категорию мероприятия \\ \hline
-	status\_id & INT & Ссылка на статус мероприятия \\ \hline
+	status\_id & ENUM & Статус мероприятия \\ \hline
 	author\_id & INT & Идентификатор автора мероприятия \\ \hline
     responsible\_id & INT & Идентификатор ответственного сотрудника \\ \hline
-	date & DATETIME & Дата проведения мероприятия \\ \hline
+	planned\_date & DATETIME & Дата проведения мероприятия \\ \hline
+	created\_at & DATETIME & Дата и время создания записи \\ \hline
+	updated\_at & DATETIME & Дата и время последнего обновления записи \\ \hline
 \end{longtable}
 
 \subsection{Разработка макетов страниц}
@@ -141,7 +143,6 @@
 \begin{itemize}
 	\item простоте навигации;
 	\item минимизации количества действий пользователя;
-	\item удобству работы с документами и мероприятиями;
 	\item единообразию элементов интерфейса;
 	\item адаптации интерфейса под различные роли пользователей.
 \end{itemize}
@@ -162,65 +163,47 @@
 	\centering
 	\includegraphics[width=0.95\textwidth]{images/login.png}
 	\caption{Страница авторизации}
-	\label{fig:use_case}
+	\label{fig:login}
 \end{figure}
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.95\textwidth]{images/events-list.png}
 	\caption{Главная страница со списком мероприятий}
-	\label{fig:use_case}
-\end{figure}
-\begin{figure}[ht!]
-	\centering
-	\includegraphics[width=0.95\textwidth]{images/events-list-delete.png}
-	\caption{Модальное окно удаления мероприятия}
-	\label{fig:use_case}
+	\label{fig:events_list}
 \end{figure}
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.95\textwidth]{images/create-event.png}
 	\caption{Страница создания мероприятия}
-	\label{fig:use_case}
+	\label{fig:create_event}
 \end{figure}
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.95\textwidth]{images/event-view.png}
 	\caption{Страница просмотра и редактирования мероприятия}
-	\label{fig:use_case}
+	\label{fig:event_view}
 \end{figure}
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.95\textwidth]{images/users.png}
 	\caption{Панель администратора}
-	\label{fig:use_case}
+	\label{fig:users}
 \end{figure}
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.95\textwidth]{images/create-edit-user.png}
 	\caption{Панель администратора: добавление или редактирование пользователя}
-	\label{fig:use_case}
-\end{figure}
-\begin{figure}[ht!]
-	\centering
-	\includegraphics[width=0.95\textwidth]{images/delete-user.png}
-	\caption{Панель администратора: удаление пользователя}
-	\label{fig:use_case}
+	\label{fig:create_edit_user}
 \end{figure}
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.95\textwidth]{images/create-edit-sp.png}
 	\caption{Панель администратора: добавление или редактирование структурного подразделения}
-	\label{fig:use_case}
-\end{figure}
-\begin{figure}[ht!]
-	\centering
-	\includegraphics[width=0.95\textwidth]{images/delete-sp.png}
-	\caption{Панель администратора: удаление структурного подразделения}
-	\label{fig:use_case}
+	\label{fig:create_edit_sp}
 \end{figure}
 \begin{figure}[ht!]
 	\centering
 	\includegraphics[width=0.95\textwidth]{images/reports.png}
 	\caption{Страница выгрузки отчетов}
-	\label{fig:use_case}
+	\label{fig:reports}
 \end{figure}
