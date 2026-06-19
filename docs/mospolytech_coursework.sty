@@ -148,10 +148,10 @@
 \AtBeginEnvironment{longtable}{\onehalfspacing\renewcommand{\arraystretch}{1.2}}
 \AtBeginEnvironment{table}{\onehalfspacing\renewcommand{\arraystretch}{1.2}}
 
-% Команда для надписи "Продолжение таблицы"
+% Команда для надписи "Продолжение таблицы" (выравнивание по ширине таблицы)
 \makeatletter
 \newcommand{\tabcont}[1]{%
-	\multicolumn{\LT@cols}{l}{\normalsize Продолжение таблицы #1} \\[6pt] \hline
+	\multicolumn{\LT@cols}{p{\dimexpr\linewidth-\LTleft-\LTright\relax}}{\normalsize Продолжение таблицы #1} \\[6pt] \hline
 }
 \makeatother
 

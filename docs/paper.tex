@@ -16,8 +16,8 @@
 % Титульный лист
 \include{title}
 
-% Задание
-% \includepdf[pages=-]{task.pdf}
+% Задание (без нумерации страниц)
+\includepdf[pages=-, pagecommand=\thispagestyle{empty}]{task.pdf}
 
 % Содержание
 \tableofcontents
